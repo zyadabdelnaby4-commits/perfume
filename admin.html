@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>إدارة العطور - Cupra</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./admin.css" />
+  </head>
+  <body>
+    <main class="admin-shell">
+      <header class="admin-header">
+        <a class="brand" href="./index.html">
+          <span class="brand-mark">C</span>
+          <span>
+            <strong>Cupra</strong>
+            <small>لوحة إدارة المنتجات</small>
+          </span>
+        </a>
+        <button class="secondary-action" type="button" data-logout>تسجيل خروج</button>
+      </header>
+
+      <section class="login-panel" data-login-panel>
+        <h1>تسجيل دخول الإدارة</h1>
+        <form class="admin-form" data-login-form>
+          <label>
+            الإيميل
+            <input name="email" type="email" value="admin@perfume.local" autocomplete="email" required />
+          </label>
+          <label>
+            الباسورد
+            <input name="password" type="password" value="123456" autocomplete="current-password" required />
+          </label>
+          <button class="checkout" type="submit">دخول</button>
+          <p class="form-message" data-login-message></p>
+        </form>
+      </section>
+
+      <section class="admin-workspace is-hidden" data-admin-workspace>
+        <div class="admin-title">
+          <div>
+            <p class="eyebrow">لوحة التحكم</p>
+            <h1>إضافة وتعديل المنتجات وإدارة الطلبات</h1>
+          </div>
+          <p data-admin-email></p>
+        </div>
+
+        <!-- Dashboard Stats Bar -->
+        <div class="stats-bar">
+          <div class="stat-card">
+            <span class="stat-label">عدد العطور</span>
+            <strong class="stat-val" data-stat-products>0</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">عدد الطلبات</span>
+            <strong class="stat-val" data-stat-orders>0</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">إجمالي الإيرادات</span>
+            <strong class="stat-val" data-stat-revenue>0 جنيه</strong>
+          </div>
+        </div>
+
+        <!-- Tab Switcher Navigation -->
+        <nav class="admin-tabs">
+          <button class="tab-btn active" data-tab="products">العطور</button>
+          <button class="tab-btn" data-tab="orders">الطلبات</button>
+        </nav>
+
+        <!-- Tab 1: Products Content -->
+        <div class="tab-content" id="tab-products">
+          <form class="product-editor" data-product-form>
+            <input type="hidden" name="id" />
+            <label>
+              اسم المنتج
+              <input name="name" required />
+            </label>
+            <label>
+              النوع
+              <select name="category" required>
+                <option value="oud">عود</option>
+                <option value="fresh">منعش</option>
+                <option value="musk">مسك</option>
+              </select>
+            </label>
+            <label>
+              الحجم
+              <input name="volume" placeholder="90ml" required />
+            </label>
+            <label>
+              السعر
+              <input name="price" type="number" min="1" step="1" required />
+            </label>
+            <label>
+              الوسم
+              <input name="tag" placeholder="مسائي" required />
+            </label>
+            <label>
+              ترتيب العرض
+              <input name="sort" type="number" min="1" value="1" required />
+            </label>
+            <label>
+              لون الزجاجة (الوضع المضيء)
+              <input type="color" id="tone-picker" value="#c77d35" />
+              <input type="hidden" name="tone" value="rgba(199, 125, 53, 0.32)" />
+            </label>
+            <label class="wide">
+              صورة المنتج
+              <input type="file" id="image-file-input" accept="image/jpeg,image/png,image/webp" />
+              <input type="hidden" name="image" />
+              <div class="image-preview-wrapper">
+                <img id="image-preview" src="" alt="معاينة الصورة" class="is-hidden" />
+              </div>
+            </label>
+            <label class="checkbox-label wide">
+              <input type="checkbox" name="featured" value="true" />
+              تمييز المنتج في الواجهة الرئيسية (Featured)
+            </label>
+            <label class="wide">
+              النوتات والوصف
+              <textarea name="notes" rows="3" required></textarea>
+            </label>
+            <div class="form-actions wide">
+              <button class="checkout" type="submit">حفظ المنتج</button>
+              <button class="secondary-action" type="button" data-reset-form>منتج جديد</button>
+            </div>
+            <p class="form-message wide" data-product-message></p>
+          </form>
+
+          <div class="admin-list" data-products-list></div>
+        </div>
+
+        <!-- Tab 2: Orders Content -->
+        <div class="tab-content is-hidden" id="tab-orders">
+          <div class="orders-table-wrapper">
+            <table class="orders-table">
+              <thead>
+                <tr>
+                  <th>معرف الطلب</th>
+                  <th>العميل</th>
+                  <th>رقم الهاتف</th>
+                  <th>المنتجات المطلوبة</th>
+                  <th>الإجمالي</th>
+                  <th>التاريخ</th>
+                  <th>الحالة</th>
+                </tr>
+              </thead>
+              <tbody data-orders-list>
+                <!-- Orders will be loaded here dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Custom Dialog Modal for Confirming deletions -->
+    <dialog id="confirm-modal" class="confirm-modal">
+      <div class="modal-content">
+        <h2>هل أنت متأكد؟</h2>
+        <p id="confirm-message">هل تريد بالتأكيد إجراء هذا الإجراء؟ لا يمكن التراجع عن ذلك.</p>
+        <div class="confirm-actions">
+          <button class="danger-action" id="confirm-yes-btn">نعم، متأكد</button>
+          <button class="secondary-action" id="confirm-no-btn">إلغاء</button>
+        </div>
+      </div>
+    </dialog>
+
+    <script src="./admin.js"></script>
+  </body>
+</html>

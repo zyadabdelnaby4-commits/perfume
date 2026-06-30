@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cupra</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar" aria-label="رأس الصفحة">
+        <a class="brand" href="#" aria-label="Cupra">
+          <span class="brand-mark">C</span>
+          <span>
+            <strong>Cupra</strong>
+            <small>عطور مختارة بعناية</small>
+          </span>
+        </a>
+
+        <nav class="nav" aria-label="الأقسام">
+          <a href="#collection">العطور</a>
+          <a href="#sets">المجموعات</a>
+          <a href="#cart">السلة</a>
+          <a href="./admin.html">الإدارة</a>
+        </nav>
+
+        <div class="topbar-actions">
+          <button class="icon-button theme-toggle" type="button" aria-label="تغيير الوضع" data-theme-toggle>
+            <span class="theme-icon">🌙</span>
+          </button>
+          
+          <button class="icon-button wishlist-jump" type="button" aria-label="المنتجات المفضلة" data-filter-wishlist>
+            <span class="theme-icon">❤️</span>
+            <span class="wishlist-count" data-wishlist-count>0</span>
+          </button>
+
+          <a class="secondary-action login-btn" href="./admin.html">دخول الإدارة</a>
+
+          <button class="icon-button cart-jump" type="button" aria-label="اذهب إلى السلة" data-scroll-cart>
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <path d="M6.5 8.5h11l-.8 10.4a2 2 0 0 1-2 1.8H9.3a2 2 0 0 1-2-1.8L6.5 8.5Z" />
+              <path d="M9 8.5V7a3 3 0 0 1 6 0v1.5" />
+            </svg>
+            <span class="cart-count" data-cart-count>0</span>
+          </button>
+        </div>
+      </header>
+
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow">مجموعة صيف 2026</p>
+          <h1 id="hero-title">اختار عطرك كأنه توقيعك الشخصي</h1>
+          <p>
+            متجر عطور أنيق لعرض المنتجات، فلترة الروائح، وإضافة الطلبات للسلة بسرعة.
+            مناسب كبداية لبراند عطور أو متجر صغير.
+          </p>
+          <div class="hero-actions">
+            <a class="primary-action" href="#collection">تصفح العطور</a>
+            <a class="secondary-action" href="#sets">شوف الباقات</a>
+          </div>
+        </div>
+
+        <div class="hero-visual" aria-label="زجاجات عطر">
+          <img src="./images/hero.png" alt="عطور فاخرة" class="hero-img" />
+        </div>
+      </section>
+
+      <section class="tools" aria-label="أدوات البحث والفلترة">
+        <label class="search">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="m21 21-4.3-4.3" />
+            <circle cx="11" cy="11" r="7" />
+          </svg>
+          <input data-search type="search" placeholder="ابحث عن عطر أو نوتة..." />
+        </label>
+
+        <div class="filters" role="tablist" aria-label="فلترة العطور">
+          <button class="filter is-active" type="button" data-filter="all">الكل</button>
+          <button class="filter" type="button" data-filter="oud">عود</button>
+          <button class="filter" type="button" data-filter="fresh">منعش</button>
+          <button class="filter" type="button" data-filter="musk">مسك</button>
+        </div>
+
+        <select class="sort-select" data-sort-select aria-label="ترتيب المنتجات">
+          <option value="default">الترتيب الافتراضي</option>
+          <option value="price-asc">السعر: من الأقل للأعلى</option>
+          <option value="price-desc">السعر: من الأعلى للأقل</option>
+          <option value="name-asc">الاسم: أ - ي</option>
+        </select>
+      </section>
+
+      <section id="collection" class="catalog" aria-labelledby="collection-title">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">الكتالوج</p>
+            <h2 id="collection-title">العطور الأكثر طلبًا</h2>
+          </div>
+          <p>كل منتج له طابع، تركيز، وسعر واضح للشراء السريع.</p>
+        </div>
+
+        <div class="product-grid" data-product-grid>
+          <!-- Skeletons shown while loading -->
+          <div class="product-card skeleton-card">
+            <div class="product-art skeleton-art"></div>
+            <div class="product-body">
+              <div class="skeleton-line skeleton-title"></div>
+              <div class="skeleton-line skeleton-notes"></div>
+              <div class="skeleton-line skeleton-notes-short"></div>
+              <div class="product-meta">
+                <div class="skeleton-line skeleton-tag"></div>
+                <div class="skeleton-line skeleton-price"></div>
+              </div>
+              <div class="skeleton-line skeleton-btn"></div>
+            </div>
+          </div>
+          <div class="product-card skeleton-card">
+            <div class="product-art skeleton-art"></div>
+            <div class="product-body">
+              <div class="skeleton-line skeleton-title"></div>
+              <div class="skeleton-line skeleton-notes"></div>
+              <div class="skeleton-line skeleton-notes-short"></div>
+              <div class="product-meta">
+                <div class="skeleton-line skeleton-tag"></div>
+                <div class="skeleton-line skeleton-price"></div>
+              </div>
+              <div class="skeleton-line skeleton-btn"></div>
+            </div>
+          </div>
+          <div class="product-card skeleton-card">
+            <div class="product-art skeleton-art"></div>
+            <div class="product-body">
+              <div class="skeleton-line skeleton-title"></div>
+              <div class="skeleton-line skeleton-notes"></div>
+              <div class="skeleton-line skeleton-notes-short"></div>
+              <div class="product-meta">
+                <div class="skeleton-line skeleton-tag"></div>
+                <div class="skeleton-line skeleton-price"></div>
+              </div>
+              <div class="skeleton-line skeleton-btn"></div>
+            </div>
+          </div>
+        </div>
+      <section id="testimonials" class="testimonials reveal" aria-labelledby="testimonials-title">
+        <div class="section-head" style="display: block; text-align: center; margin-bottom: 32px;">
+          <p class="eyebrow" style="text-align: center;">ماذا يقول عملاؤنا</p>
+          <h2 id="testimonials-title" style="text-align: center;">آراء وتجارب تفخر بها</h2>
+        </div>
+        <div class="testimonials-grid">
+          <div class="testimonial-card">
+            <div class="stars">★★★★★</div>
+            <p>"عطر Amber Oud فاق توقعاتي ثبات وفوحان رائع جداً، والتوصيل كان سريع جداً."</p>
+            <strong>خالد عبد الرحمن</strong>
+          </div>
+          <div class="testimonial-card">
+            <div class="stars">★★★★★</div>
+            <p>"روائح نظيفة ومنعشة جداً، جربت Fresh Linen للاستخدام اليومي وممتاز للحر الصيفي."</p>
+            <strong>منى يوسف</strong>
+          </div>
+          <div class="testimonial-card">
+            <div class="stars">★★★★★</div>
+            <p>"التغليف الفاخر والاهتمام بأدق التفاصيل يجعلها خيار الهدية الأمثل بدون تردد."</p>
+            <strong>سارة أحمد</strong>
+          </div>
+        </div>
+      </section>
+
+      <section id="sets" class="sets" aria-labelledby="sets-title">
+        <div>
+          <p class="eyebrow">باقات جاهزة</p>
+          <h2 id="sets-title">اختيارات للهدايا والاستخدام اليومي</h2>
+        </div>
+        <div class="set-grid">
+          <article class="set-card">
+            <span class="set-icon">3</span>
+            <h3>Discovery Set</h3>
+            <p>ثلاث عينات صغيرة لاختيار الرائحة المناسبة قبل شراء الحجم الكامل.</p>
+          </article>
+          <article class="set-card">
+            <span class="set-icon">2</span>
+            <h3>Couple Duo</h3>
+            <p>تركيبة أنثوية وذكورية متوازنة، جاهزة كهدية راقية.</p>
+          </article>
+          <article class="set-card">
+            <span class="set-icon">1</span>
+            <h3>Signature Box</h3>
+            <p>زجاجة كاملة مع تغليف فاخر وكارت إهداء باسم العميل.</p>
+          </article>
+        </div>
+      </section>
+
+      <div id="cart-drawer-overlay" class="drawer-overlay" aria-hidden="true"></div>
+      <aside id="cart-drawer" class="drawer" aria-labelledby="drawer-title" aria-modal="true" role="dialog">
+        <header class="drawer-header">
+          <div>
+            <p class="eyebrow">طلبك</p>
+            <h2 id="drawer-title">السلة</h2>
+          </div>
+          <button class="drawer-close" type="button" aria-label="إغلاق السلة" data-close-drawer>&times;</button>
+        </header>
+        <div class="drawer-body">
+          <div class="cart-items" data-cart-items>
+            <p class="empty">السلة فاضية حاليًا.</p>
+          </div>
+        </div>
+        <footer class="drawer-footer">
+          <div class="cart-total">
+            <span>الإجمالي</span>
+            <strong data-total>0 جنيه</strong>
+          </div>
+          <button class="checkout" type="button" data-checkout>إتمام الطلب</button>
+        </footer>
+      </aside>
+
+      <dialog id="checkout-modal" class="checkout-modal">
+        <div class="modal-content">
+          <header class="modal-header">
+            <h2>تفاصيل الشحن</h2>
+            <button class="modal-close" type="button" aria-label="إغلاق النافذة" data-close-modal>&times;</button>
+          </header>
+          <form id="checkout-form" class="checkout-form">
+            <label>
+              الاسم بالكامل
+              <input type="text" name="name" required placeholder="مثال: أحمد محمد" />
+            </label>
+            <label>
+              رقم الهاتف (واتساب)
+              <input type="tel" name="phone" required placeholder="مثال: 01012345678" pattern="^01[0-255]\d{8}$" title="يرجى إدخال رقم هاتف مصري صحيح مكون من 11 رقم" />
+            </label>
+            <label>
+              عنوان الشحن وملاحظات
+              <textarea name="notes" placeholder="العنوان بالتفصيل وأي ملاحظات للتسليم..." rows="3"></textarea>
+            </label>
+            
+            <div class="modal-actions">
+              <button type="submit" class="primary-action" data-submit-server>تأكيد الطلب وحفظه</button>
+              <button type="button" class="secondary-action whatsapp-btn" data-submit-whatsapp>
+                <svg aria-hidden="true" viewBox="0 0 24 24" class="wa-icon">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.458 5.704 1.459h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413" />
+                </svg>
+                طلب عبر واتساب
+              </button>
+            </div>
+          </form>
+        </div>
+      </dialog>
+    </main>
+
+    <template id="product-card-template">
+      <article class="product-card">
+        <div class="product-art">
+          <img src="" alt="" class="product-img" loading="lazy" />
+          <button class="wishlist-btn" type="button" aria-label="أضف للمفضلة" data-wishlist-toggle>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+            </svg>
+          </button>
+        </div>
+        <div class="product-body">
+          <div class="product-title-row">
+            <h3></h3>
+            <span class="volume"></span>
+          </div>
+          <p class="notes"></p>
+          <div class="product-meta">
+            <span class="tag"></span>
+            <strong class="price"></strong>
+          </div>
+          <button class="add-button" type="button">
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <path d="M12 5v14" />
+              <path d="M5 12h14" />
+            </svg>
+            أضف للسلة
+          </button>
+        </div>
+      </article>
+    </template>
+
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+    <script src="./toast.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
