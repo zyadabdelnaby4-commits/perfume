@@ -1,0 +1,8 @@
+server.js
+package.json
+data/
+node_modules/
+.git/
+.firebase/
+.firebaserc
+firebase.json

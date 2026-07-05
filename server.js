@@ -228,33 +228,48 @@ function validateOrder(input) {
   if (!input.phone || typeof input.phone !== "string" || !input.phone.trim()) {
     throw new Error("رقم الهاتف مطلوب");
   }
+  if (!/^01[0125]\d{8}$/.test(String(input.phone).trim())) {
+    throw new Error("يرجى إدخال رقم هاتف مصري صحيح");
+  }
   if (!Array.isArray(input.items) || input.items.length === 0) {
     throw new Error("يجب اختيار منتج واحد على الأقل");
   }
   for (const item of input.items) {
-    if (!item.name || !item.quantity || !Number.isInteger(item.quantity) || item.quantity <= 0) {
+    if (!item.id || !Number.isInteger(item.quantity) || item.quantity <= 0 || item.quantity > 20) {
       throw new Error("بيانات المنتجات في السلة غير صالحة");
     }
-  }
-  if (typeof input.total !== "number" || !Number.isFinite(input.total) || input.total <= 0) {
-    throw new Error("إجمالي الطلب غير صالح");
   }
 }
 
 function cleanOrder(input) {
   validateOrder(input);
+  const products = readProducts();
+  const items = input.items.map((item) => {
+    const product = products.find((entry) => entry.id === String(item.id).trim());
+    if (!product) {
+      throw new Error("منتج غير متاح في السلة");
+    }
+    const quantity = Number(item.quantity);
+    const price = Number(product.price);
+    if (!Number.isFinite(price) || price <= 0) {
+      throw new Error("سعر المنتج غير صالح");
+    }
+    return {
+      id: product.id,
+      name: product.name,
+      quantity,
+      price
+    };
+  });
+  const total = items.reduce((sum, item) => sum + item.quantity * item.price, 0);
+
   return {
     id: `ord_${crypto.randomBytes(6).toString("hex")}`,
     customerName: String(input.customerName).trim(),
     phone: String(input.phone).trim(),
     notes: String(input.notes || "").trim(),
-    items: input.items.map(item => ({
-      id: String(item.id || "").trim(),
-      name: String(item.name).trim(),
-      quantity: Number(item.quantity),
-      price: Number(item.price)
-    })),
-    total: Number(input.total),
+    items,
+    total,
     status: "new",
     createdAt: new Date().toISOString()
   };

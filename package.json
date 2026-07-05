@@ -1,8 +1,13 @@
 {
-  "name": "perfume-web",
+  "name": "cupra-perfume",
   "version": "1.0.0",
-  "private": true,
+  "description": "Cupra Perfume Store",
+  "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

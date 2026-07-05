@@ -167,7 +167,7 @@ if (imageFileInput) {
       }
 
       productForm.elements.image.value = data.filename;
-      imagePreview.src = `./images/products/${data.filename}`;
+      imagePreview.src = API_BASE ? `${API_BASE}/images/products/${data.filename}` : `./images/products/${data.filename}`;
       imagePreview.classList.remove("is-hidden");
       setMessage(productMessage, "تم رفع الصورة بنجاح.");
     } catch (err) {
@@ -227,9 +227,10 @@ function renderProducts() {
   products.forEach((product) => {
     const item = document.createElement("article");
     item.className = "admin-item";
+    const imgPath = product.image ? (API_BASE ? `${API_BASE}/images/products/${product.image}` : `./images/products/${product.image}`) : './images/products/amber-oud.png';
     item.innerHTML = `
       <div style="display: flex; gap: 14px; align-items: center;">
-        <img src="${product.image ? `./images/products/${product.image}` : './images/products/amber-oud.png'}" 
+        <img src="${imgPath}" 
              alt="${product.name}" 
              style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;" 
              onerror="this.src='./images/products/amber-oud.png'" />
@@ -300,8 +301,9 @@ ordersList.addEventListener("change", async (e) => {
       orders[orderIndex].status = newStatus;
     }
     calculateStats();
+    if (window.showToast) window.showToast("تم تحديث حالة الطلب بنجاح ✨", "success");
   } catch (err) {
-    alert(err.message);
+    if (window.showToast) window.showToast(err.message, "error");
   }
 });
 
@@ -319,7 +321,7 @@ function fillForm(product) {
   productForm.elements.image.value = product.image || "";
 
   if (product.image) {
-    imagePreview.src = `./images/products/${product.image}`;
+    imagePreview.src = API_BASE ? `${API_BASE}/images/products/${product.image}` : `./images/products/${product.image}`;
     imagePreview.classList.remove("is-hidden");
   } else {
     imagePreview.classList.add("is-hidden");
@@ -380,17 +382,20 @@ productForm.addEventListener("submit", async (event) => {
         body: JSON.stringify(product),
       });
       setMessage(productMessage, "اتعدل المنتج بنجاح.");
+      if (window.showToast) window.showToast("تم تعديل المنتج بنجاح ✨", "success");
     } else {
       await api("/api/products", {
         method: "POST",
         body: JSON.stringify(product),
       });
       setMessage(productMessage, "اتضاف المنتج بنجاح.");
+      if (window.showToast) window.showToast("تم إضافة المنتج بنجاح ✨", "success");
     }
     resetForm();
     await loadDashboard();
   } catch (error) {
     setMessage(productMessage, error.message, true);
+    if (window.showToast) window.showToast(error.message, "error");
   }
 });
 
@@ -409,9 +414,10 @@ productsList.addEventListener("click", async (event) => {
     if (!ok) return;
     try {
       await api(`/api/products/${encodeURIComponent(deleteId)}`, { method: "DELETE" });
+      if (window.showToast) window.showToast("تم حذف المنتج بنجاح 🗑️", "success");
       await loadDashboard();
     } catch (err) {
-      alert(err.message);
+      if (window.showToast) window.showToast(err.message, "error");
     }
   }
 });

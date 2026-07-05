@@ -1,4 +1,6 @@
 const API_BASE = location.hostname === 'localhost' || location.hostname === '127.0.0.1' ? '' : 'https://perfume-atelier-api.onrender.com';
+const WHATSAPP_PHONE = "201022869475";
+const CART_STORAGE_KEY = "cupra_cart";
 let products = [];
 
 const fallbackProducts = [
@@ -33,9 +35,10 @@ const fallbackProducts = [
 const state = {
   filter: "all",
   query: "",
-  cart: [],
+  cart: JSON.parse(localStorage.getItem(CART_STORAGE_KEY) || "[]"),
   wishlist: JSON.parse(localStorage.getItem("wishlist") || "[]"),
   sort: "default",
+  maxPrice: 2000,
 };
 
 const productGrid = document.querySelector("[data-product-grid]");
@@ -57,6 +60,17 @@ const checkoutModal = document.querySelector("#checkout-modal");
 const closeModalBtn = document.querySelector("[data-close-modal]");
 const checkoutForm = document.querySelector("#checkout-form");
 const whatsappBtn = document.querySelector("[data-submit-whatsapp]");
+const priceRange = document.querySelector("[data-price-range]");
+const priceLabel = document.querySelector("[data-price-label]");
+const productDetailModal = document.querySelector("#product-detail-modal");
+const detailCloseBtn = document.querySelector("[data-detail-close]");
+const detailImage = document.querySelector("[data-detail-image]");
+const detailBadge = document.querySelector("[data-detail-badge]");
+const detailName = document.querySelector("[data-detail-name]");
+const detailMeta = document.querySelector("[data-detail-meta]");
+const detailNotes = document.querySelector("[data-detail-notes]");
+const detailPrice = document.querySelector("[data-detail-price]");
+const detailAddBtn = document.querySelector("[data-detail-add]");
 
 // Wishlist & Sorting elements
 const wishlistCount = document.querySelector("[data-wishlist-count]");
@@ -64,11 +78,34 @@ const wishlistJump = document.querySelector("[data-filter-wishlist]");
 const sortSelect = document.querySelector("[data-sort-select]");
 
 let isWhatsAppSubmit = false;
+let activeDetailProductId = "";
 
 const formatter = new Intl.NumberFormat("ar-EG");
 
 function money(value) {
   return `${formatter.format(value)} جنيه`;
+}
+
+function saveCart() {
+  localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(state.cart));
+}
+
+function updatePriceLabel() {
+  if (priceLabel) {
+    priceLabel.textContent = `حتى ${money(state.maxPrice)}`;
+  }
+}
+
+function syncCartWithProducts() {
+  if (!products.length || !state.cart.length) return;
+  state.cart = state.cart
+    .map((cartItem) => {
+      const freshProduct = products.find((product) => (product.id || product.name) === (cartItem.id || cartItem.name));
+      if (!freshProduct) return null;
+      return { ...freshProduct, quantity: Math.max(1, Number(cartItem.quantity) || 1) };
+    })
+    .filter(Boolean);
+  saveCart();
 }
 
 // Dark Mode Toggle Logic
@@ -151,7 +188,7 @@ function toggleWishlist(productId) {
 
 // Intersection Observer for scroll animations
 function initScrollReveal() {
-  const reveals = document.querySelectorAll(".product-card, .set-card, .drawer, .testimonial-card");
+  const reveals = document.querySelectorAll(".product-card, .set-card, .drawer, .testimonial-card, .trust-strip > div, .offer-band");
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
@@ -177,7 +214,17 @@ async function loadProducts() {
   } catch {
     products = fallbackProducts;
   }
+  const highestPrice = products.reduce((max, product) => Math.max(max, Number(product.price) || 0), 2000);
+  const maxRange = Math.ceil(highestPrice / 50) * 50;
+  state.maxPrice = Math.min(Number(priceRange?.value) || maxRange, maxRange);
+  if (priceRange) {
+    priceRange.max = String(maxRange);
+    priceRange.value = String(state.maxPrice);
+  }
+  syncCartWithProducts();
+  updatePriceLabel();
   renderProducts();
+  renderCart();
   initScrollReveal();
 }
 
@@ -190,7 +237,8 @@ function getVisibleProducts() {
       
     const text = `${product.name} ${product.notes} ${product.tag}`.toLowerCase();
     const matchesQuery = text.includes(state.query.trim().toLowerCase());
-    return matchesFilter && matchesQuery;
+    const matchesPrice = Number(product.price) <= state.maxPrice;
+    return matchesFilter && matchesQuery && matchesPrice;
   });
 }
 
@@ -228,11 +276,16 @@ function renderProducts() {
     card.querySelector(".notes").textContent = product.notes;
     card.querySelector(".tag").textContent = product.tag;
     card.querySelector(".price").textContent = money(product.price);
+
+    const badge = card.querySelector(".featured-badge");
+    if (badge) {
+      badge.classList.toggle("is-visible", !!product.featured);
+    }
     
     // Set Product image
     const imgEl = card.querySelector(".product-img");
     if (imgEl) {
-      imgEl.src = product.image ? `./images/products/${product.image}` : './images/products/amber-oud.png';
+      imgEl.src = product.image ? (API_BASE ? `${API_BASE}/images/products/${product.image}` : `./images/products/${product.image}`) : './images/products/amber-oud.png';
       imgEl.alt = product.name;
       imgEl.onerror = () => {
         imgEl.src = './images/products/amber-oud.png'; // safe fallback
@@ -255,7 +308,48 @@ function renderProducts() {
         window.showToast(`تمت إضافة ${product.name} إلى السلة`, "success");
       }
     });
+
+    const detailsBtn = card.querySelector("[data-product-details]");
+    if (detailsBtn) {
+      detailsBtn.addEventListener("click", () => openProductDetails(prodId));
+    }
+
     productGrid.appendChild(card);
+  });
+}
+
+function openProductDetails(productId) {
+  const product = products.find((item) => (item.id || item.name) === productId);
+  if (!product || !productDetailModal) return;
+
+  activeDetailProductId = productId;
+  if (detailImage) {
+    detailImage.src = product.image ? (API_BASE ? `${API_BASE}/images/products/${product.image}` : `./images/products/${product.image}`) : "./images/products/amber-oud.png";
+    detailImage.alt = product.name;
+    detailImage.onerror = () => {
+      detailImage.src = "./images/products/amber-oud.png";
+    };
+  }
+  if (detailBadge) {
+    detailBadge.classList.toggle("is-visible", !!product.featured);
+  }
+  if (detailName) detailName.textContent = product.name;
+  if (detailMeta) detailMeta.textContent = `${product.volume} / ${product.tag}`;
+  if (detailNotes) detailNotes.textContent = product.notes;
+  if (detailPrice) detailPrice.textContent = money(product.price);
+
+  productDetailModal.showModal();
+}
+
+if (detailCloseBtn) {
+  detailCloseBtn.addEventListener("click", () => productDetailModal.close());
+}
+
+if (detailAddBtn) {
+  detailAddBtn.addEventListener("click", () => {
+    addToCart(activeDetailProductId);
+    productDetailModal.close();
+    openDrawer();
   });
 }
 
@@ -270,6 +364,7 @@ function addToCart(productId) {
     state.cart.push({ ...product, quantity: 1 });
   }
 
+  saveCart();
   renderCart();
 }
 
@@ -315,6 +410,7 @@ cartItems.addEventListener("click", (e) => {
     const item = state.cart.find(i => (i.id || i.name) === plusId);
     if (item) {
       item.quantity += 1;
+      saveCart();
       renderCart();
     }
   } else if (minusId) {
@@ -325,10 +421,12 @@ cartItems.addEventListener("click", (e) => {
       } else {
         state.cart = state.cart.filter(i => (i.id || i.name) !== minusId);
       }
+      saveCart();
       renderCart();
     }
   } else if (removeId) {
     state.cart = state.cart.filter(i => (i.id || i.name) !== removeId);
+    saveCart();
     renderCart();
     if (window.showToast) {
       window.showToast("تم حذف المنتج من السلة", "info");
@@ -354,6 +452,14 @@ searchInput.addEventListener("input", (event) => {
 if (sortSelect) {
   sortSelect.addEventListener("change", (e) => {
     state.sort = e.target.value;
+    renderProducts();
+  });
+}
+
+if (priceRange) {
+  priceRange.addEventListener("input", (e) => {
+    state.maxPrice = Number(e.target.value);
+    updatePriceLabel();
     renderProducts();
   });
 }
@@ -403,7 +509,7 @@ if (checkoutForm) {
     const notes = formData.get("notes").trim();
 
     // Validate phone structure
-    const phoneRegex = /^01[0-255]\d{8}$/;
+    const phoneRegex = /^01[0125]\d{8}$/;
     if (!phoneRegex.test(phone)) {
       if (window.showToast) window.showToast("يرجى إدخال رقم هاتف مصري صحيح (11 رقم)", "error");
       isWhatsAppSubmit = false;
@@ -416,11 +522,8 @@ if (checkoutForm) {
       notes,
       items: state.cart.map(item => ({
         id: item.id,
-        name: item.name,
-        quantity: item.quantity,
-        price: item.price
-      })),
-      total: state.cart.reduce((sum, item) => sum + item.quantity * item.price, 0)
+        quantity: item.quantity
+      }))
     };
 
     try {
@@ -446,11 +549,12 @@ if (checkoutForm) {
         const itemsText = state.cart.map(item => `- ${item.name} (×${item.quantity}) — ${money(item.quantity * item.price)}`).join("\n");
         const total = state.cart.reduce((sum, item) => sum + item.quantity * item.price, 0);
         const messageText = `مرحباً، عندي طلب من Cupra:\n\n${itemsText}\n\nالإجمالي: ${money(total)}\nالاسم: ${customerName}\nالتليفون: ${phone}${notes ? `\nملاحظات: ${notes}` : ""}`;
-        const whatsappUrl = `https://wa.me/201012345678?text=${encodeURIComponent(messageText)}`;
+        const whatsappUrl = `https://wa.me/201022869475?text=${encodeURIComponent(messageText)}`;
         window.open(whatsappUrl, "_blank");
       }
 
       state.cart = [];
+      saveCart();
       renderCart();
       checkoutForm.reset();
       checkoutModal.close();
