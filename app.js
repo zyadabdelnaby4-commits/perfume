@@ -1,6 +1,6 @@
 const API_BASE = location.hostname === 'localhost' || location.hostname === '127.0.0.1' ? '' : 'https://perfume-atelier-api.onrender.com';
 const WHATSAPP_PHONE = "201022869475";
-const CART_STORAGE_KEY = "cupra_cart";
+const CART_STORAGE_KEY = "zycore_cart";
 let products = [];
 
 const fallbackProducts = [
@@ -548,7 +548,7 @@ if (checkoutForm) {
       if (isWhatsAppSubmit) {
         const itemsText = state.cart.map(item => `- ${item.name} (×${item.quantity}) — ${money(item.quantity * item.price)}`).join("\n");
         const total = state.cart.reduce((sum, item) => sum + item.quantity * item.price, 0);
-        const messageText = `مرحباً، عندي طلب من Cupra:\n\n${itemsText}\n\nالإجمالي: ${money(total)}\nالاسم: ${customerName}\nالتليفون: ${phone}${notes ? `\nملاحظات: ${notes}` : ""}`;
+        const messageText = `مرحباً، عندي طلب من Zycore:\n\n${itemsText}\n\nالإجمالي: ${money(total)}\nالاسم: ${customerName}\nالتليفون: ${phone}${notes ? `\nملاحظات: ${notes}` : ""}`;
         const whatsappUrl = `https://wa.me/201022869475?text=${encodeURIComponent(messageText)}`;
         window.open(whatsappUrl, "_blank");
       }

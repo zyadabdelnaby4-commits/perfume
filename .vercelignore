@@ -1,8 +1,12 @@
 server.js
 package.json
+package-lock.json
 data/
 node_modules/
 .git/
 .firebase/
 .firebaserc
 firebase.json
+vercel.json
+.vercelignore
+README.md

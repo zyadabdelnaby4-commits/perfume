@@ -1,7 +1,7 @@
 {
-  "name": "cupra-perfume",
+  "name": "zycore-perfume",
   "version": "1.0.0",
-  "description": "Cupra Perfume Store",
+  "description": "Zycore Perfume Store — Scents of Contrast",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
