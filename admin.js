@@ -107,12 +107,34 @@ async function loadOrders() {
 function calculateStats() {
   if (statProducts) statProducts.textContent = products.length;
   if (statOrders) statOrders.textContent = orders.length;
+  
+  const activeOrders = orders.filter(o => o.status !== "cancelled");
+  const totalRev = activeOrders.reduce((sum, o) => sum + (o.total || 0), 0);
   if (statRevenue) {
-    // Sum only non-cancelled orders
-    const totalRev = orders
-      .filter(o => o.status !== "cancelled")
-      .reduce((sum, o) => sum + (o.total || 0), 0);
     statRevenue.textContent = `${new Intl.NumberFormat("ar-EG").format(totalRev)} جنيه`;
+  }
+
+  // Calculate actual profits from active orders
+  let totalProfit = 0;
+  activeOrders.forEach(order => {
+    order.items.forEach(item => {
+      const prod = products.find(p => p.id === item.id);
+      if (prod) {
+        const bottle = Number(prod.bottlePrice || 0);
+        const oil = Number(prod.oilPrice || 0);
+        const transport = Number(prod.transportCost || 0);
+        const price = Number(item.price || prod.price || 0);
+        const profitPerUnit = price - (bottle + oil + transport);
+        totalProfit += profitPerUnit * item.quantity;
+      } else {
+        totalProfit += (item.price || 0) * item.quantity;
+      }
+    });
+  });
+
+  const statProfit = document.querySelector("[data-stat-profit]");
+  if (statProfit) {
+    statProfit.textContent = `${new Intl.NumberFormat("ar-EG").format(totalProfit)} جنيه`;
   }
 }
 
@@ -228,6 +250,12 @@ function renderProducts() {
     const item = document.createElement("article");
     item.className = "admin-item";
     const imgPath = product.image ? (API_BASE ? `${API_BASE}/images/products/${product.image}` : `./images/products/${product.image}`) : './images/products/amber-oud.png';
+    
+    const bottle = Number(product.bottlePrice || 0);
+    const oil = Number(product.oilPrice || 0);
+    const transport = Number(product.transportCost || 0);
+    const profit = Number(product.price || 0) - (bottle + oil + transport);
+
     item.innerHTML = `
       <div style="display: flex; gap: 14px; align-items: center;">
         <img src="${imgPath}" 
@@ -237,6 +265,9 @@ function renderProducts() {
         <div>
           <h3>${product.name} - ${product.price} جنيه ${product.featured ? '<span style="color: var(--accent-gold); font-size:12px;">★ مميز</span>' : ''}</h3>
           <p>الحجم: ${product.volume} / ترتيب: ${product.sort || 0} / الوسم: ${product.tag} / النوتات: ${product.notes}</p>
+          <p style="margin: 4px 0 0; font-size: 13px; color: var(--accent-teal);">
+            سعر الزجاجة: ${bottle} ج | سعر الزيت: ${oil} ج | مواصلات: ${transport} ج | <strong>صافي الربح: ${profit} ج</strong>
+          </p>
         </div>
       </div>
       <div class="item-actions">
@@ -313,6 +344,9 @@ function fillForm(product) {
   productForm.elements.category.value = product.category;
   productForm.elements.volume.value = product.volume;
   productForm.elements.price.value = product.price;
+  productForm.elements.bottlePrice.value = product.bottlePrice || 0;
+  productForm.elements.oilPrice.value = product.oilPrice || 0;
+  productForm.elements.transportCost.value = product.transportCost || 0;
   productForm.elements.tag.value = product.tag;
   productForm.elements.tone.value = product.tone;
   productForm.elements.sort.value = product.sort || 1;
@@ -327,6 +361,7 @@ function fillForm(product) {
     imagePreview.classList.add("is-hidden");
   }
 
+  updateProfitPreview();
   productForm.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
@@ -335,6 +370,9 @@ function resetForm() {
   productForm.elements.id.value = "";
   productForm.elements.tone.value = "rgba(199, 125, 53, 0.32)";
   productForm.elements.image.value = "";
+  productForm.elements.bottlePrice.value = 0;
+  productForm.elements.oilPrice.value = 0;
+  productForm.elements.transportCost.value = 0;
   if (tonePicker) tonePicker.value = "#c77d35";
   if (imagePreview) {
     imagePreview.src = "";
@@ -342,6 +380,7 @@ function resetForm() {
   }
   if (imageFileInput) imageFileInput.value = "";
   setMessage(productMessage, "");
+  updateProfitPreview();
 }
 
 loginForm.addEventListener("submit", async (event) => {
@@ -432,6 +471,27 @@ document.querySelector("[data-logout]").addEventListener("click", async () => {
   }
   localStorage.removeItem("admin_token");
   showLogin();
+});
+
+function updateProfitPreview() {
+  const price = Number(productForm.elements.price.value || 0);
+  const bottle = Number(productForm.elements.bottlePrice.value || 0);
+  const oil = Number(productForm.elements.oilPrice.value || 0);
+  const transport = Number(productForm.elements.transportCost.value || 0);
+  const profit = price - (bottle + oil + transport);
+  
+  const previewEl = document.querySelector("[data-profit-preview]");
+  if (previewEl) {
+    previewEl.textContent = isNaN(profit) ? 0 : profit;
+  }
+}
+
+// Bind real-time profit calculations
+["input", "change"].forEach(evtName => {
+  productForm.elements.price.addEventListener(evtName, updateProfitPreview);
+  productForm.elements.bottlePrice.addEventListener(evtName, updateProfitPreview);
+  productForm.elements.oilPrice.addEventListener(evtName, updateProfitPreview);
+  productForm.elements.transportCost.addEventListener(evtName, updateProfitPreview);
 });
 
 resetForm();

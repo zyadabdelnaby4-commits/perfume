@@ -62,6 +62,10 @@
             <span class="stat-label">إجمالي الإيرادات</span>
             <strong class="stat-val" data-stat-revenue>0 جنيه</strong>
           </div>
+          <div class="stat-card" style="border-color: var(--accent-teal);">
+            <span class="stat-label" style="color: var(--accent-teal);">إجمالي الأرباح الفعلية</span>
+            <strong class="stat-val" style="color: var(--accent-teal);" data-stat-profit>0 جنيه</strong>
+          </div>
         </div>
 
         <!-- Tab Switcher Navigation -->
@@ -91,8 +95,20 @@
               <input name="volume" placeholder="90ml" required />
             </label>
             <label>
-              السعر
+              السعر (سعر البيع)
               <input name="price" type="number" min="1" step="1" required />
+            </label>
+            <label>
+              سعر الزجاجة
+              <input name="bottlePrice" type="number" min="0" step="1" value="0" />
+            </label>
+            <label>
+              سعر الزيت
+              <input name="oilPrice" type="number" min="0" step="1" value="0" />
+            </label>
+            <label>
+              تكلفة المواصلات
+              <input name="transportCost" type="number" min="0" step="1" value="0" />
             </label>
             <label>
               الوسم
@@ -102,6 +118,10 @@
               ترتيب العرض
               <input name="sort" type="number" min="1" value="1" required />
             </label>
+            <div class="wide" style="margin-top: 4px; padding: 12px; border: 1px dashed var(--line); border-radius: 6px; background: rgba(46, 163, 159, 0.05); display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-weight: 700; color: var(--muted);">صافي ربح الزجاجة المتوقع:</span>
+              <strong style="color: var(--accent-teal); font-size: 18px;"><span data-profit-preview>0</span> جنيه</strong>
+            </div>
             <label>
               لون الزجاجة (الوضع المضيء)
               <input type="color" id="tone-picker" value="#c77d35" />

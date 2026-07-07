@@ -137,22 +137,47 @@ function updateThemeToggleIcon(theme) {
 function openDrawer() {
   cartDrawer.classList.add("is-active");
   cartDrawerOverlay.classList.add("is-active");
+  document.body.style.overflow = "hidden";
 }
 
 function closeDrawer() {
   cartDrawer.classList.remove("is-active");
   cartDrawerOverlay.classList.remove("is-active");
+  document.body.style.overflow = "";
 }
 
-if (closeDrawerBtn) closeDrawerBtn.addEventListener("click", closeDrawer);
-if (cartDrawerOverlay) cartDrawerOverlay.addEventListener("click", closeDrawer);
-
-const cartJump = document.querySelector("[data-scroll-cart]");
-if (cartJump) {
-  cartJump.addEventListener("click", () => {
-    openDrawer();
+if (closeDrawerBtn) {
+  closeDrawerBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    closeDrawer();
   });
 }
+
+if (cartDrawerOverlay) {
+  cartDrawerOverlay.addEventListener("click", (e) => {
+    e.preventDefault();
+    closeDrawer();
+  });
+}
+
+// Bind all scroll-cart triggers and the nav cart link
+const cartJumps = document.querySelectorAll("[data-scroll-cart], a[href='#cart']");
+cartJumps.forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    e.preventDefault();
+    openDrawer();
+  });
+});
+
+// ESC key to close drawer and open dialogs
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    closeDrawer();
+    if (checkoutModal && checkoutModal.open) checkoutModal.close();
+    if (productDetailModal && productDetailModal.open) productDetailModal.close();
+  }
+});
 
 // Wishlist functions
 function updateWishlistUI() {

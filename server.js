@@ -6,12 +6,43 @@ const crypto = require("crypto");
 const PORT = Number(process.env.PORT || 4173);
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@perfume.local";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "123456";
-const PUBLIC_DIR = __dirname;
-const DATA_FILE = path.join(__dirname, "data", "products.json");
-const ORDERS_FILE = path.join(__dirname, "data", "orders.json");
-const IMAGES_DIR = path.join(__dirname, "images");
+const PUBLIC_DIR = process.cwd();
+const DATA_FILE = path.join(process.cwd(), "data", "products.json");
+const ORDERS_FILE = path.join(process.cwd(), "data", "orders.json");
+const IMAGES_DIR = path.join(process.cwd(), "images");
 const PRODUCTS_IMAGE_DIR = path.join(IMAGES_DIR, "products");
-const sessions = new Set();
+
+const TOKEN_SECRET = process.env.ADMIN_PASSWORD || "123456";
+
+function generateToken(email) {
+  const payload = JSON.stringify({ email, exp: Date.now() + 24 * 60 * 60 * 1000 });
+  const base64Payload = Buffer.from(payload).toString("base64url");
+  const hmac = crypto.createHmac("sha256", TOKEN_SECRET);
+  hmac.update(base64Payload);
+  const signature = hmac.digest("base64url");
+  return `${base64Payload}.${signature}`;
+}
+
+function verifyToken(token) {
+  if (!token) return null;
+  const parts = token.split(".");
+  if (parts.length !== 2) return null;
+  const [base64Payload, signature] = parts;
+  
+  const hmac = crypto.createHmac("sha256", TOKEN_SECRET);
+  hmac.update(base64Payload);
+  const expectedSignature = hmac.digest("base64url");
+  
+  if (signature !== expectedSignature) return null;
+  
+  try {
+    const payload = JSON.parse(Buffer.from(base64Payload, "base64url").toString("utf8"));
+    if (payload.exp < Date.now()) return null; // expired
+    return payload;
+  } catch {
+    return null;
+  }
+}
 
 const mimeTypes = {
   ".html": "text/html; charset=utf-8",
@@ -26,8 +57,8 @@ const mimeTypes = {
 };
 
 // Ensure directories exist
-if (!fs.existsSync(path.join(__dirname, "data"))) {
-  fs.mkdirSync(path.join(__dirname, "data"), { recursive: true });
+if (!fs.existsSync(path.join(process.cwd(), "data"))) {
+  fs.mkdirSync(path.join(process.cwd(), "data"), { recursive: true });
 }
 if (!fs.existsSync(PRODUCTS_IMAGE_DIR)) {
   fs.mkdirSync(PRODUCTS_IMAGE_DIR, { recursive: true });
@@ -132,8 +163,14 @@ function getSession(req) {
   return matchCookie ? matchCookie[1] : "";
 }
 
+function getLoggedInEmail(req) {
+  const token = getSession(req);
+  const payload = verifyToken(token);
+  return payload ? payload.email : null;
+}
+
 function isLoggedIn(req) {
-  return sessions.has(getSession(req));
+  return !!getLoggedInEmail(req);
 }
 
 function requireLogin(req, res) {
@@ -165,6 +202,9 @@ function cleanProduct(input, currentId) {
     notes: String(input.notes).trim(),
     tag: String(input.tag).trim(),
     price,
+    bottlePrice: Number(input.bottlePrice || 0),
+    oilPrice: Number(input.oilPrice || 0),
+    transportCost: Number(input.transportCost || 0),
     tone: String(input.tone || "rgba(199, 125, 53, 0.32)").trim(),
     image: String(input.image || "").trim(),
     featured: !!input.featured,
@@ -299,14 +339,14 @@ function cleanOrder(input) {
 
 async function handleApi(req, res, url) {
   if (url.pathname === "/api/session" && req.method === "GET") {
-    return sendJson(res, 200, { loggedIn: isLoggedIn(req), email: isLoggedIn(req) ? ADMIN_EMAIL : "" }, req);
+    const loggedIn = isLoggedIn(req);
+    return sendJson(res, 200, { loggedIn, email: loggedIn ? ADMIN_EMAIL : "" }, req);
   }
 
   if (url.pathname === "/api/login" && req.method === "POST") {
     const body = await readBody(req);
     if (body.email === ADMIN_EMAIL && body.password === ADMIN_PASSWORD) {
-      const token = crypto.randomBytes(24).toString("hex");
-      sessions.add(token);
+      const token = generateToken(ADMIN_EMAIL);
       
       const origin = req.headers.origin || "*";
       res.writeHead(200, {
@@ -321,7 +361,6 @@ async function handleApi(req, res, url) {
   }
 
   if (url.pathname === "/api/logout" && req.method === "POST") {
-    sessions.delete(getSession(req));
     const origin = req.headers.origin || "*";
     res.writeHead(200, {
       "Content-Type": "application/json; charset=utf-8",
@@ -463,8 +502,9 @@ function serveStatic(req, res, url) {
   });
 }
 
-const server = http.createServer(async (req, res) => {
-  const url = new URL(req.url, `http://${req.headers.host}`);
+const requestHandler = async (req, res) => {
+  const host = req.headers.host || "localhost";
+  const url = new URL(req.url, `http://${host}`);
   
   // Handle CORS Preflight
   if (req.method === "OPTIONS") {
@@ -488,7 +528,9 @@ const server = http.createServer(async (req, res) => {
   } catch (error) {
     sendJson(res, 400, { error: error.message || "Something went wrong" }, req);
   }
-});
+};
+
+const server = http.createServer(requestHandler);
 
 if (require.main === module) {
   server.listen(PORT, () => {
@@ -497,4 +539,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = server;
+module.exports = requestHandler;
