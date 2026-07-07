@@ -1,4 +1,4 @@
-const API_BASE = location.hostname === 'localhost' || location.hostname === '127.0.0.1' ? '' : 'https://perfume-atelier-api.onrender.com';
+const API_BASE = '';
 const WHATSAPP_PHONE = "201022869475";
 const CART_STORAGE_KEY = "zycore_cart";
 let products = [];

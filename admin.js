@@ -9,7 +9,7 @@ const productMessage = document.querySelector("[data-product-message]");
 const adminEmail = document.querySelector("[data-admin-email]");
 
 // API Server base path configurations
-const API_BASE = location.hostname === 'localhost' || location.hostname === '127.0.0.1' ? '' : 'https://perfume-atelier-api.onrender.com';
+const API_BASE = '';
 
 // Stats fields
 const statProducts = document.querySelector("[data-stat-products]");

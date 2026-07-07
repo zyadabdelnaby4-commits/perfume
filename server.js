@@ -36,7 +36,11 @@ if (!fs.existsSync(PRODUCTS_IMAGE_DIR)) {
 function readProducts() {
   try {
     if (!fs.existsSync(DATA_FILE)) {
-      fs.writeFileSync(DATA_FILE, "[]\n", "utf8");
+      try {
+        fs.writeFileSync(DATA_FILE, "[]\n", "utf8");
+      } catch (err) {
+        // Ignore write failures in read-only environments
+      }
     }
     return JSON.parse(fs.readFileSync(DATA_FILE, "utf8"));
   } catch {
@@ -45,13 +49,24 @@ function readProducts() {
 }
 
 function writeProducts(products) {
-  fs.writeFileSync(DATA_FILE, `${JSON.stringify(products, null, 2)}\n`, "utf8");
+  try {
+    fs.writeFileSync(DATA_FILE, `${JSON.stringify(products, null, 2)}\n`, "utf8");
+  } catch (err) {
+    if (err.code === "EROFS" || err.message.includes("read-only")) {
+      throw new Error("تعديل المنتجات متاح فقط أثناء التشغيل المحلي (Local). يرجى تعديل المنتجات على جهازك ثم رفع التحديثات إلى GitHub ليتم تحديث الموقع تلقائياً.");
+    }
+    throw err;
+  }
 }
 
 function readOrders() {
   try {
     if (!fs.existsSync(ORDERS_FILE)) {
-      fs.writeFileSync(ORDERS_FILE, "[]\n", "utf8");
+      try {
+        fs.writeFileSync(ORDERS_FILE, "[]\n", "utf8");
+      } catch (err) {
+        // Ignore write failures in read-only environments
+      }
     }
     return JSON.parse(fs.readFileSync(ORDERS_FILE, "utf8"));
   } catch {
@@ -60,7 +75,14 @@ function readOrders() {
 }
 
 function writeOrders(orders) {
-  fs.writeFileSync(ORDERS_FILE, `${JSON.stringify(orders, null, 2)}\n`, "utf8");
+  try {
+    fs.writeFileSync(ORDERS_FILE, `${JSON.stringify(orders, null, 2)}\n`, "utf8");
+  } catch (err) {
+    if (err.code === "EROFS" || err.message.includes("read-only")) {
+      throw new Error("حفظ الطلبات في قاعدة البيانات متاح فقط محلياً. يرجى إتمام الطلب عبر واتساب ليصلك مباشرة.");
+    }
+    throw err;
+  }
 }
 
 function sendJson(res, status, payload, req) {
@@ -369,7 +391,11 @@ async function handleApi(req, res, url) {
       fs.writeFileSync(finalPath, buffer);
       return sendJson(res, 200, { ok: true, filename: finalFilename }, req);
     } catch (err) {
-      return sendJson(res, 400, { error: err.message }, req);
+      let msg = err.message;
+      if (err.code === "EROFS" || err.message.includes("read-only")) {
+        msg = "رفع الصور متاح فقط أثناء التشغيل المحلي (Local). يرجى رفع الصورة على جهازك ثم تحديث المشروع.";
+      }
+      return sendJson(res, 400, { error: msg }, req);
     }
   }
 
@@ -464,7 +490,11 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, () => {
-  console.log(`Perfume web is running on http://127.0.0.1:${PORT}`);
-  console.log(`Admin: ${ADMIN_EMAIL} / ${ADMIN_PASSWORD}`);
-});
+if (require.main === module) {
+  server.listen(PORT, () => {
+    console.log(`Perfume web is running on http://127.0.0.1:${PORT}`);
+    console.log(`Admin: ${ADMIN_EMAIL} / ${ADMIN_PASSWORD}`);
+  });
+}
+
+module.exports = server;

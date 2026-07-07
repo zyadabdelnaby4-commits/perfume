@@ -6,6 +6,7 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/server.js" },
     { "source": "/admin", "destination": "/admin.html" }
   ],
   "headers": [
