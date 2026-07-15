@@ -1,13 +1,8 @@
 {
-  "name": "zycore-perfume",
+  "name": "perfume-web",
   "version": "1.0.0",
-  "description": "Zycore Perfume Store — Scents of Contrast",
-  "main": "server.js",
+  "private": true,
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js"
-  },
-  "engines": {
-    "node": ">=18.0.0"
+    "start": "node server.js"
   }
 }

@@ -1,181 +1,151 @@
 <!doctype html>
 <html lang="ar" dir="rtl" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Perfume Atelier</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar" aria-label="رأس الصفحة">
+        <a class="brand" href="#" aria-label="Perfume Atelier">
+          <span class="brand-mark">PA</span>
+          <span>
+            <strong>Perfume Atelier</strong>
+            <small>عطور مختارة بعناية</small>
+          </span>
+        </a>
 
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Zycore | النواة الأصلية للروائح الفاخرة</title>
-  <meta name="description"
-    content="عطور لا تتغير ملامحها مع الوقت. في ZYCORE، نقدم النواة الأصلية للروائح الفاخرة بتركيبات خام وجريئة تعكس تباين شخصيتك الفريد." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Cinzel:wght@400;700;900&family=Montserrat:wght@400;600;700;800&display=swap"
-    rel="stylesheet" />
-  <link rel="stylesheet" href="./styles.css" />
-</head>
+        <nav class="nav" aria-label="الأقسام">
+          <a href="#collection">العطور</a>
+          <a href="#sets">المجموعات</a>
+          <a href="#cart">السلة</a>
+          <a href="./admin.html">الإدارة</a>
+        </nav>
 
-<body>
-  <main class="shell">
-    <header class="topbar" aria-label="رأس الصفحة">
-      <a class="brand" href="#" aria-label="Zycore">
-        <span class="brand-mark">Z</span>
-        <span>
-          <strong>Zycore</strong>
-          <small>Scents of Contrast</small>
-        </span>
-      </a>
+        <div class="topbar-actions">
+          <button class="icon-button theme-toggle" type="button" aria-label="تغيير الوضع" data-theme-toggle>
+            <span class="theme-icon">🌙</span>
+          </button>
+          
+          <button class="icon-button wishlist-jump" type="button" aria-label="المنتجات المفضلة" data-filter-wishlist>
+            <span class="theme-icon">❤️</span>
+            <span class="wishlist-count" data-wishlist-count>0</span>
+          </button>
 
-      <nav class="nav" aria-label="الأقسام">
-        <a href="#collection">العطور</a>
-        <a href="#sets">المجموعات</a>
-        <a href="#cart">السلة</a>
-      </nav>
+          <a class="secondary-action login-btn" href="./admin.html">دخول الإدارة</a>
 
-      <div class="topbar-actions">
-        <button class="icon-button theme-toggle" type="button" aria-label="تغيير الوضع" data-theme-toggle>
-          <span class="theme-icon">🌙</span>
-        </button>
+          <button class="icon-button cart-jump" type="button" aria-label="اذهب إلى السلة" data-scroll-cart>
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <path d="M6.5 8.5h11l-.8 10.4a2 2 0 0 1-2 1.8H9.3a2 2 0 0 1-2-1.8L6.5 8.5Z" />
+              <path d="M9 8.5V7a3 3 0 0 1 6 0v1.5" />
+            </svg>
+            <span class="cart-count" data-cart-count>0</span>
+          </button>
+        </div>
+      </header>
 
-        <button class="icon-button wishlist-jump" type="button" aria-label="المنتجات المفضلة" data-filter-wishlist>
-          <span class="theme-icon">❤️</span>
-          <span class="wishlist-count" data-wishlist-count>0</span>
-        </button>
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow">مجموعة صيف 2026</p>
+          <h1 id="hero-title">اختار عطرك كأنه توقيعك الشخصي</h1>
+          <p>
+            متجر عطور أنيق لعرض المنتجات، فلترة الروائح، وإضافة الطلبات للسلة بسرعة.
+            مناسب كبداية لبراند عطور أو متجر صغير.
+          </p>
+          <div class="hero-actions">
+            <a class="primary-action" href="#collection">تصفح العطور</a>
+            <a class="secondary-action" href="#sets">شوف الباقات</a>
+          </div>
+        </div>
 
-        <button class="icon-button cart-jump" type="button" aria-label="اذهب إلى السلة" data-scroll-cart>
+        <div class="hero-visual" aria-label="زجاجات عطر">
+          <img src="./images/hero.png" alt="عطور فاخرة" class="hero-img" />
+        </div>
+      </section>
+
+      <section class="tools" aria-label="أدوات البحث والفلترة">
+        <label class="search">
           <svg aria-hidden="true" viewBox="0 0 24 24">
-            <path d="M6.5 8.5h11l-.8 10.4a2 2 0 0 1-2 1.8H9.3a2 2 0 0 1-2-1.8L6.5 8.5Z" />
-            <path d="M9 8.5V7a3 3 0 0 1 6 0v1.5" />
+            <path d="m21 21-4.3-4.3" />
+            <circle cx="11" cy="11" r="7" />
           </svg>
-          <span class="cart-count" data-cart-count>0</span>
-        </button>
-      </div>
-    </header>
+          <input data-search type="search" placeholder="ابحث عن عطر أو نوتة..." />
+        </label>
 
-    <section class="hero" aria-labelledby="hero-title">
-      <div class="hero-copy">
-        <p class="eyebrow">Essence of Motion · 2026</p>
-        <h1 id="hero-title">الرائحة التى تتركها… تعرّفك قبل أي كلام</h1>
-        <p>
-          عطور لا تتغير ملامحها مع الوقت. في ZYCORE، نقدم النواة الأصلية للروائح الفاخرة بتركيبات خام وجريئة تعكس تباين
-          شخصيتك الفريد.
-        </p>
-        <div class="hero-actions">
-          <a class="primary-action" href="#collection">اكتشف المجموعة</a>
-          <a class="secondary-action" href="#sets">الباقات الفاخرة</a>
+        <div class="filters" role="tablist" aria-label="فلترة العطور">
+          <button class="filter is-active" type="button" data-filter="all">الكل</button>
+          <button class="filter" type="button" data-filter="oud">عود</button>
+          <button class="filter" type="button" data-filter="fresh">منعش</button>
+          <button class="filter" type="button" data-filter="musk">مسك</button>
         </div>
-      </div>
 
-      <div class="hero-visual" aria-label="زجاجات عطر">
-        <img src="./images/products/bianco_latte.png" alt="عطر Bianco Latte من Zycore" class="hero-img" />
-      </div>
-    </section>
+        <select class="sort-select" data-sort-select aria-label="ترتيب المنتجات">
+          <option value="default">الترتيب الافتراضي</option>
+          <option value="price-asc">السعر: من الأقل للأعلى</option>
+          <option value="price-desc">السعر: من الأعلى للأقل</option>
+          <option value="name-asc">الاسم: أ - ي</option>
+        </select>
+      </section>
 
-    <section class="trust-strip" aria-label="مميزات الشراء">
-      <div>
-        <strong>دفع عند الاستلام</strong>
-        <span>راجع طلبك قبل الدفع</span>
-      </div>
-      <div>
-        <strong>توصيل سريع</strong>
-        <span>داخل القاهرة والجيزة</span>
-      </div>
-
-      <div>
-        <strong>دعم واتساب</strong>
-        <span>مساعدة قبل الطلب</span>
-      </div>
-    </section>
-
-    <section class="offer-band" aria-label="عرض خاص">
-      <p>عرض الافتتاح: اطلب عبر واتساب واسأل عن خصم أول طلب.</p>
-      <a href="https://wa.me/201022869475?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%D8%8C%20%D8%A3%D8%B1%D9%8A%D8%AF%20%D9%85%D8%B9%D8%B1%D9%81%D8%A9%20%D8%B9%D8%B1%D8%B6%20%D8%A3%D9%88%D9%84%20%D8%B7%D9%84%D8%A8%20%D9%85%D9%86%20Zycore"
-        target="_blank" rel="noopener">اسأل عن العرض</a>
-    </section>
-
-    <section class="tools" aria-label="أدوات البحث والفلترة">
-      <label class="search">
-        <svg aria-hidden="true" viewBox="0 0 24 24">
-          <path d="m21 21-4.3-4.3" />
-          <circle cx="11" cy="11" r="7" />
-        </svg>
-        <input data-search type="search" placeholder="ابحث عن عطر أو نوتة..." />
-      </label>
-
-      <div class="filters" role="tablist" aria-label="فلترة العطور">
-        <button class="filter is-active" type="button" data-filter="all">الكل</button>
-        <button class="filter" type="button" data-filter="oud">عود</button>
-        <button class="filter" type="button" data-filter="fresh">منعش</button>
-        <button class="filter" type="button" data-filter="musk">مسك</button>
-      </div>
-
-      <select class="sort-select" data-sort-select aria-label="ترتيب المنتجات">
-        <option value="default">الترتيب الافتراضي</option>
-        <option value="price-asc">السعر: من الأقل للأعلى</option>
-        <option value="price-desc">السعر: من الأعلى للأقل</option>
-        <option value="name-asc">الاسم: أ - ي</option>
-      </select>
-
-      <label class="price-filter">
-        <span data-price-label>حتى ٢٠٠٠ جنيه</span>
-        <input data-price-range type="range" min="800" max="2000" step="50" value="2000" />
-      </label>
-    </section>
-
-    <section id="collection" class="catalog" aria-labelledby="collection-title">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">The Collection</p>
-          <h2 id="collection-title">العطور الأكثر طلبًا</h2>
+      <section id="collection" class="catalog" aria-labelledby="collection-title">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">الكتالوج</p>
+            <h2 id="collection-title">العطور الأكثر طلبًا</h2>
+          </div>
+          <p>كل منتج له طابع، تركيز، وسعر واضح للشراء السريع.</p>
         </div>
-        <p>كل عطر بتركيز واضح وشخصية حادة. اختر العطر الذي يتحدث قبلك.</p>
-      </div>
 
-      <div class="product-grid" data-product-grid>
-        <!-- Skeletons shown while loading -->
-        <div class="product-card skeleton-card">
-          <div class="product-art skeleton-art"></div>
-          <div class="product-body">
-            <div class="skeleton-line skeleton-title"></div>
-            <div class="skeleton-line skeleton-notes"></div>
-            <div class="skeleton-line skeleton-notes-short"></div>
-            <div class="product-meta">
-              <div class="skeleton-line skeleton-tag"></div>
-              <div class="skeleton-line skeleton-price"></div>
+        <div class="product-grid" data-product-grid>
+          <!-- Skeletons shown while loading -->
+          <div class="product-card skeleton-card">
+            <div class="product-art skeleton-art"></div>
+            <div class="product-body">
+              <div class="skeleton-line skeleton-title"></div>
+              <div class="skeleton-line skeleton-notes"></div>
+              <div class="skeleton-line skeleton-notes-short"></div>
+              <div class="product-meta">
+                <div class="skeleton-line skeleton-tag"></div>
+                <div class="skeleton-line skeleton-price"></div>
+              </div>
+              <div class="skeleton-line skeleton-btn"></div>
             </div>
-            <div class="skeleton-line skeleton-btn"></div>
+          </div>
+          <div class="product-card skeleton-card">
+            <div class="product-art skeleton-art"></div>
+            <div class="product-body">
+              <div class="skeleton-line skeleton-title"></div>
+              <div class="skeleton-line skeleton-notes"></div>
+              <div class="skeleton-line skeleton-notes-short"></div>
+              <div class="product-meta">
+                <div class="skeleton-line skeleton-tag"></div>
+                <div class="skeleton-line skeleton-price"></div>
+              </div>
+              <div class="skeleton-line skeleton-btn"></div>
+            </div>
+          </div>
+          <div class="product-card skeleton-card">
+            <div class="product-art skeleton-art"></div>
+            <div class="product-body">
+              <div class="skeleton-line skeleton-title"></div>
+              <div class="skeleton-line skeleton-notes"></div>
+              <div class="skeleton-line skeleton-notes-short"></div>
+              <div class="product-meta">
+                <div class="skeleton-line skeleton-tag"></div>
+                <div class="skeleton-line skeleton-price"></div>
+              </div>
+              <div class="skeleton-line skeleton-btn"></div>
+            </div>
           </div>
         </div>
-        <div class="product-card skeleton-card">
-          <div class="product-art skeleton-art"></div>
-          <div class="product-body">
-            <div class="skeleton-line skeleton-title"></div>
-            <div class="skeleton-line skeleton-notes"></div>
-            <div class="skeleton-line skeleton-notes-short"></div>
-            <div class="product-meta">
-              <div class="skeleton-line skeleton-tag"></div>
-              <div class="skeleton-line skeleton-price"></div>
-            </div>
-            <div class="skeleton-line skeleton-btn"></div>
-          </div>
-        </div>
-        <div class="product-card skeleton-card">
-          <div class="product-art skeleton-art"></div>
-          <div class="product-body">
-            <div class="skeleton-line skeleton-title"></div>
-            <div class="skeleton-line skeleton-notes"></div>
-            <div class="skeleton-line skeleton-notes-short"></div>
-            <div class="product-meta">
-              <div class="skeleton-line skeleton-tag"></div>
-              <div class="skeleton-line skeleton-price"></div>
-            </div>
-            <div class="skeleton-line skeleton-btn"></div>
-          </div>
-        </div>
-      </div>
       <section id="testimonials" class="testimonials reveal" aria-labelledby="testimonials-title">
         <div class="section-head" style="display: block; text-align: center; margin-bottom: 32px;">
-          <p class="eyebrow" style="text-align: center;">Client Reviews</p>
+          <p class="eyebrow" style="text-align: center;">ماذا يقول عملاؤنا</p>
           <h2 id="testimonials-title" style="text-align: center;">آراء وتجارب تفخر بها</h2>
         </div>
         <div class="testimonials-grid">
@@ -257,20 +227,18 @@
             </label>
             <label>
               رقم الهاتف (واتساب)
-              <input type="tel" name="phone" required placeholder="مثال: 01012345678" pattern="^01[0125]\d{8}$"
-                title="يرجى إدخال رقم هاتف مصري صحيح مكون من 11 رقم" />
+              <input type="tel" name="phone" required placeholder="مثال: 01012345678" pattern="^01[0-255]\d{8}$" title="يرجى إدخال رقم هاتف مصري صحيح مكون من 11 رقم" />
             </label>
             <label>
               عنوان الشحن وملاحظات
               <textarea name="notes" placeholder="العنوان بالتفصيل وأي ملاحظات للتسليم..." rows="3"></textarea>
             </label>
-
+            
             <div class="modal-actions">
               <button type="submit" class="primary-action" data-submit-server>تأكيد الطلب وحفظه</button>
               <button type="button" class="secondary-action whatsapp-btn" data-submit-whatsapp>
                 <svg aria-hidden="true" viewBox="0 0 24 24" class="wa-icon">
-                  <path
-                    d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.458 5.704 1.459h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413" />
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.458 5.704 1.459h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413" />
                 </svg>
                 طلب عبر واتساب
               </button>
@@ -278,151 +246,42 @@
           </form>
         </div>
       </dialog>
+    </main>
 
-      <dialog id="product-detail-modal" class="product-detail-modal">
-        <div class="product-detail-content">
-          <button class="modal-close detail-close" type="button" aria-label="إغلاق تفاصيل العطر"
-            data-detail-close>&times;</button>
-          <div class="detail-media">
-            <img src="" alt="" data-detail-image />
+    <template id="product-card-template">
+      <article class="product-card">
+        <div class="product-art">
+          <img src="" alt="" class="product-img" loading="lazy" />
+          <button class="wishlist-btn" type="button" aria-label="أضف للمفضلة" data-wishlist-toggle>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+            </svg>
+          </button>
+        </div>
+        <div class="product-body">
+          <div class="product-title-row">
+            <h3></h3>
+            <span class="volume"></span>
           </div>
-          <div class="detail-info">
-            <span class="detail-badge" data-detail-badge>مميز</span>
-            <h2 data-detail-name></h2>
-            <p class="detail-meta" data-detail-meta></p>
-            <p class="detail-notes" data-detail-notes></p>
-            <div class="detail-highlights">
-              <span>ثبات مناسب للاستخدام اليومي</span>
-              <span>اختيار أنيق للهدايا</span>
-              <span>متاح للطلب عبر واتساب</span>
-            </div>
-            <!-- اختيار الحجم -->
-            <div class="detail-size-selector">
-              <span class="selector-label">اختر الحجم:</span>
-              <div class="size-options-group" data-detail-sizes></div>
-            </div>
-            <strong class="detail-price" data-detail-price></strong>
-            <button class="primary-action" type="button" data-detail-add>أضف للسلة</button>
+          <p class="notes"></p>
+          <div class="product-meta">
+            <span class="tag"></span>
+            <strong class="price"></strong>
           </div>
+          <button class="add-button" type="button">
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <path d="M12 5v14" />
+              <path d="M5 12h14" />
+            </svg>
+            أضف للسلة
+          </button>
         </div>
-      </dialog>
+      </article>
+    </template>
 
-      <section class="faq" aria-labelledby="faq-title">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">قبل الطلب</p>
-            <h2 id="faq-title">معلومات سريعة تطمّن العميل</h2>
-          </div>
-          <p>تفاصيل مختصرة عن طريقة الطلب والشحن والمتابعة عشان قرار الشراء يبقى أوضح وأسهل.</p>
-        </div>
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
 
-        <div class="faq-grid">
-          <article class="faq-card">
-            <span>01</span>
-            <h3>الدفع عند الاستلام</h3>
-            <p>تقدر تراجع طلبك عند الوصول، والدفع بيكون نقدًا وقت التسليم.</p>
-          </article>
-          <article class="faq-card">
-            <span>02</span>
-            <h3>متابعة على واتساب</h3>
-            <p>بعد تأكيد الطلب هنراجع الاسم والرقم والعنوان معاك قبل التجهيز.</p>
-          </article>
-          <article class="faq-card">
-            <span>03</span>
-            <h3>اختيار المقاس</h3>
-            <p>كل عطر متاح بأحجام مختلفة، والسعر بيتغير تلقائيًا حسب الاختيار.</p>
-          </article>
-          <article class="faq-card">
-            <span>04</span>
-            <h3>الهدايا والتغليف</h3>
-            <p>ممكن تطلب تغليف هدية وتكتب ملاحظاتك في تفاصيل الطلب.</p>
-          </article>
-        </div>
-      </section>
-
-      <footer class="footer" aria-label="تذييل الصفحة">
-        <div class="footer-content">
-          <div class="footer-brand">
-            <span class="brand-mark">Z</span>
-            <div>
-              <strong>Zycore</strong>
-              <small>Scents of Contrast</small>
-            </div>
-          </div>
-          <p class="footer-desc">
-            النواة الأصلية للروائح الفاخرة بتركيبات خام وجريئة تعكس تباين شخصيتك الفريد.
-          </p>
-          <div class="footer-links">
-            <a href="#collection">العطور</a>
-            <a href="#sets">المجموعات</a>
-            <a href="https://wa.me/201022869475" target="_blank" rel="noopener">تواصل معنا</a>
-            <a href="https://www.instagram.com/zycoreperfume/" target="_blank" rel="noopener">إنستجرام</a>
-            <a href="https://www.facebook.com/Zycoreperfume?locale=ar_AR" target="_blank" rel="noopener">فيسبوك</a>
-            <a href="./admin.html">تسجيل دخول الإدارة</a>
-          </div>
-        </div>
-        <div class="footer-bottom">
-          <p>&copy; 2026 Zycore. جميع الحقوق محفوظة.</p>
-        </div>
-      </footer>
-  </main>
-
-  <div class="floating-contact" aria-label="تواصل سريع">
-    <a class="floating-call" href="tel:01022869475" aria-label="اتصل بنا" title="اتصل بنا">
-      <svg aria-hidden="true" viewBox="0 0 24 24">
-        <path
-          d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6.4 6.4l1.2-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6A2 2 0 0 1 22 16.9Z" />
-      </svg>
-    </a>
-    <a class="floating-whatsapp"
-      href="https://wa.me/201022869475?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%D8%8C%20%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D9%81%D8%B3%D8%A7%D8%B1%20%D8%B9%D9%86%20%D8%B9%D8%B7%D9%88%D8%B1%20Zycore"
-      target="_blank" rel="noopener" aria-label="تواصل معنا على واتساب" title="تواصل معنا على واتساب">
-      <svg aria-hidden="true" viewBox="0 0 24 24">
-        <path
-          d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.458 5.704 1.459h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413" />
-      </svg>
-      <span>واتساب</span>
-    </a>
-  </div>
-
-  <template id="product-card-template">
-    <article class="product-card">
-      <div class="product-art">
-        <img src="" alt="" class="product-img" loading="lazy" />
-        <button class="wishlist-btn" type="button" aria-label="أضف للمفضلة" data-wishlist-toggle>
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-          </svg>
-        </button>
-      </div>
-      <div class="product-body">
-        <div class="product-title-row">
-          <h3></h3>
-          <span class="volume"></span>
-        </div>
-        <span class="featured-badge">الأكثر مبيعًا</span>
-        <p class="notes"></p>
-        <div class="product-meta">
-          <span class="tag"></span>
-          <strong class="price"></strong>
-        </div>
-        <button class="details-button" type="button" data-product-details>التفاصيل</button>
-        <button class="add-button" type="button">
-          <svg aria-hidden="true" viewBox="0 0 24 24">
-            <path d="M12 5v14" />
-            <path d="M5 12h14" />
-          </svg>
-          أضف للسلة
-        </button>
-      </div>
-    </article>
-  </template>
-
-  <div id="toast-container" class="toast-container" aria-live="polite"></div>
-
-  <script src="./toast.js"></script>
-  <script src="./app.js"></script>
-</body>
-
+    <script src="./toast.js"></script>
+    <script src="./app.js"></script>
+  </body>
 </html>
