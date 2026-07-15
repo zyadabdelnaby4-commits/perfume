@@ -9,6 +9,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Cinzel:wght@400;700;900&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./styles.css" />
     <link rel="stylesheet" href="./admin.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+      @media print {
+        body > *:not(#invoice-print-area) { display: none !important; }
+        #invoice-print-area { display: block !important; padding: 20px; font-family: 'Cairo', sans-serif; color: #000; background: #fff; }
+        #invoice-print-area * { color: #000 !important; background: none !important; }
+      }
+      #invoice-print-area { display: none; }
+    </style>
   </head>
   <body>
     <main class="admin-shell">
@@ -23,6 +32,7 @@
         <button class="secondary-action" type="button" data-logout>تسجيل خروج</button>
       </header>
 
+      <!-- LOGIN PANEL -->
       <section class="login-panel" data-login-panel>
         <h1>تسجيل دخول الإدارة</h1>
         <form class="admin-form" data-login-form>
@@ -39,140 +49,506 @@
         </form>
       </section>
 
+      <!-- ADMIN WORKSPACE (hidden until logged in) -->
       <section class="admin-workspace is-hidden" data-admin-workspace>
-        <div class="admin-title">
-          <div>
-            <p class="eyebrow">لوحة التحكم</p>
-            <h1>إضافة وتعديل المنتجات وإدارة الطلبات</h1>
-          </div>
-          <p data-admin-email></p>
-        </div>
+        <div class="workspace-container">
 
-        <!-- Dashboard Stats Bar -->
-        <div class="stats-bar">
-          <div class="stat-card">
-            <span class="stat-label">عدد العطور</span>
-            <strong class="stat-val" data-stat-products>0</strong>
-          </div>
-          <div class="stat-card">
-            <span class="stat-label">عدد الطلبات</span>
-            <strong class="stat-val" data-stat-orders>0</strong>
-          </div>
-          <div class="stat-card">
-            <span class="stat-label">إجمالي الإيرادات</span>
-            <strong class="stat-val" data-stat-revenue>0 جنيه</strong>
-          </div>
-          <div class="stat-card" style="border-color: var(--accent-teal);">
-            <span class="stat-label" style="color: var(--accent-teal);">إجمالي الأرباح الفعلية</span>
-            <strong class="stat-val" style="color: var(--accent-teal);" data-stat-profit>0 جنيه</strong>
-          </div>
-        </div>
-
-        <!-- Tab Switcher Navigation -->
-        <nav class="admin-tabs">
-          <button class="tab-btn active" data-tab="products">العطور</button>
-          <button class="tab-btn" data-tab="orders">الطلبات</button>
-        </nav>
-
-        <!-- Tab 1: Products Content -->
-        <div class="tab-content" id="tab-products">
-          <form class="product-editor" data-product-form>
-            <input type="hidden" name="id" />
-            <label>
-              اسم المنتج
-              <input name="name" required />
-            </label>
-            <label>
-              النوع
-              <select name="category" required>
-                <option value="oud">عود</option>
-                <option value="fresh">منعش</option>
-                <option value="musk">مسك</option>
-              </select>
-            </label>
-            <label>
-              الحجم
-              <input name="volume" placeholder="90ml" required />
-            </label>
-            <label>
-              السعر (سعر البيع)
-              <input name="price" type="number" min="1" step="1" required />
-            </label>
-            <label>
-              سعر الزجاجة
-              <input name="bottlePrice" type="number" min="0" step="1" value="0" />
-            </label>
-            <label>
-              سعر الزيت
-              <input name="oilPrice" type="number" min="0" step="1" value="0" />
-            </label>
-            <label>
-              تكلفة المواصلات
-              <input name="transportCost" type="number" min="0" step="1" value="0" />
-            </label>
-            <label>
-              الوسم
-              <input name="tag" placeholder="مسائي" required />
-            </label>
-            <label>
-              ترتيب العرض
-              <input name="sort" type="number" min="1" value="1" required />
-            </label>
-            <div class="wide" style="margin-top: 4px; padding: 12px; border: 1px dashed var(--line); border-radius: 6px; background: rgba(46, 163, 159, 0.05); display: flex; align-items: center; justify-content: space-between;">
-              <span style="font-weight: 700; color: var(--muted);">صافي ربح الزجاجة المتوقع:</span>
-              <strong style="color: var(--accent-teal); font-size: 18px;"><span data-profit-preview>0</span> جنيه</strong>
+          <!-- Sidebar Navigation Tree -->
+          <aside class="admin-sidebar">
+            <div class="sidebar-title">
+              <span class="eyebrow" data-admin-email>مسجل باسم الأدمن</span>
             </div>
-            <label>
-              لون الزجاجة (الوضع المضيء)
-              <input type="color" id="tone-picker" value="#c77d35" />
-              <input type="hidden" name="tone" value="rgba(199, 125, 53, 0.32)" />
-            </label>
-            <label class="wide">
-              صورة المنتج
-              <input type="file" id="image-file-input" accept="image/jpeg,image/png,image/webp" />
-              <input type="hidden" name="image" />
-              <div class="image-preview-wrapper">
-                <img id="image-preview" src="" alt="معاينة الصورة" class="is-hidden" />
+
+            <nav class="sidebar-nav">
+              <div class="menu-group">
+                <span class="menu-group-title">الرئيسية</span>
+                <button class="nav-btn active" data-tab="dashboard">
+                  <span class="nav-icon">📊</span> لوحة التحكم
+                </button>
               </div>
-            </label>
-            <label class="checkbox-label wide">
-              <input type="checkbox" name="featured" value="true" />
-              تمييز المنتج في الواجهة الرئيسية (Featured)
-            </label>
-            <label class="wide">
-              النوتات والوصف
-              <textarea name="notes" rows="3" required></textarea>
-            </label>
-            <div class="form-actions wide">
-              <button class="checkout" type="submit">حفظ المنتج</button>
-              <button class="secondary-action" type="button" data-reset-form>منتج جديد</button>
+
+              <div class="menu-group">
+                <span class="menu-group-title">إدارة المنتجات</span>
+                <button class="nav-btn" data-tab="products">
+                  <span class="nav-icon">🧴</span> عرض المنتجات
+                </button>
+                <button class="nav-btn" data-tab="add-product">
+                  <span class="nav-icon">➕</span> إضافة عطر جديد
+                </button>
+              </div>
+
+              <div class="menu-group">
+                <span class="menu-group-title">العمليات والمالية</span>
+                <button class="nav-btn" data-tab="orders">
+                  <span class="nav-icon">📦</span> الطلبات الواردة
+                </button>
+                <button class="nav-btn" data-tab="purchases">
+                  <span class="nav-icon">💸</span> سجل المشتريات
+                </button>
+              </div>
+
+              <div class="menu-group">
+                <span class="menu-group-title">الإعدادات</span>
+                <button class="nav-btn" data-tab="settings">
+                  <span class="nav-icon">⚙️</span> إعدادات المصنع
+                </button>
+              </div>
+
+              <div class="menu-group" style="margin-top: auto; padding-top: 16px; border-top: 1px solid var(--line);">
+                <span class="menu-group-title">النسخ الاحتياطية</span>
+                <button class="nav-btn" id="backup-btn" type="button" style="color: var(--accent-teal);">
+                  <span class="nav-icon">📥</span> تحميل نسخة احتياطية
+                </button>
+                <label class="nav-btn" style="cursor:pointer; color: #f59e0b;">
+                  <span class="nav-icon">📤</span> استعادة نسخة
+                  <input type="file" id="restore-file-input" accept=".json" style="display:none;" />
+                </label>
+              </div>
+            </nav>
+          </aside>
+
+          <!-- Main Content Area -->
+          <main class="workspace-main">
+
+            <!-- TAB 0: Dashboard -->
+            <div class="tab-content" id="tab-dashboard">
+              <div class="admin-title" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                <div>
+                  <p class="eyebrow">لوحة المعلومات</p>
+                  <h1>نظرة عامة على الأداء والمبيعات</h1>
+                </div>
+                <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                  <select id="dash-month-filter" style="padding:8px 14px; border-radius:8px; font-size:13px; font-family:inherit;">
+                    <option value="all">📅 كل الوقت</option>
+                  </select>
+                  <button id="dash-all-time-btn" type="button" class="secondary-action" style="padding:8px 14px; font-size:13px;">عرض الكل</button>
+                </div>
+              </div>
+
+              <div class="stats-bar">
+                <div class="stat-card">
+                  <div class="stat-card-header">
+                    <span class="stat-label">عدد العطور</span>
+                    <span class="card-icon">🧴</span>
+                  </div>
+                  <strong class="stat-val" data-stat-products>0</strong>
+                </div>
+
+                <div class="stat-card">
+                  <div class="stat-card-header">
+                    <span class="stat-label">عدد الطلبات</span>
+                    <span class="card-icon">📦</span>
+                  </div>
+                  <strong class="stat-val" data-stat-orders>0</strong>
+                </div>
+
+                <div class="stat-card">
+                  <div class="stat-card-header">
+                    <span class="stat-label">إجمالي الإيرادات</span>
+                    <span class="card-icon">💵</span>
+                  </div>
+                  <strong class="stat-val" data-stat-revenue>0 جنيه</strong>
+                </div>
+
+                <div class="stat-card" style="border-color: var(--accent-burgundy);">
+                  <div class="stat-card-header">
+                    <span class="stat-label" style="color: var(--accent-burgundy);">إجمالي المشتريات</span>
+                    <span class="card-icon">💸</span>
+                  </div>
+                  <strong class="stat-val" style="color: var(--accent-burgundy);" data-stat-purchases>0 جنيه</strong>
+                </div>
+
+                <div class="stat-card" style="border-color: #8b5cf6;">
+                  <div class="stat-card-header">
+                    <span class="stat-label" style="color: #8b5cf6;">رأس المال المضاف</span>
+                    <span class="card-icon">🏦</span>
+                  </div>
+                  <strong class="stat-val" style="color: #8b5cf6;" data-stat-capital>0 جنيه</strong>
+                </div>
+
+                <div class="stat-card" style="border-color: var(--accent-teal);">
+                  <div class="stat-card-header">
+                    <span class="stat-label" style="color: var(--accent-teal);">الربح الصافي النهائي</span>
+                    <span class="card-icon">📈</span>
+                  </div>
+                  <strong class="stat-val" style="color: var(--accent-teal);" data-stat-net-profit>0 جنيه</strong>
+                </div>
+
+                <div class="stat-card" style="border-color: var(--accent-gold);">
+                  <div class="stat-card-header">
+                    <span class="stat-label" style="color: var(--accent-gold);">الربح التشغيلي المتوقع</span>
+                    <span class="card-icon">🧪</span>
+                  </div>
+                  <strong class="stat-val" style="color: var(--accent-gold);" data-stat-profit>0 جنيه</strong>
+                </div>
+              </div>
+
+              <!-- Sales Chart -->
+              <div class="dashboard-card" style="margin-bottom: 24px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                  <h2 style="margin:0;">📈 مبيعات آخر 7 أيام</h2>
+                  <span id="chart-period-label" style="font-size:13px; color:var(--muted);"></span>
+                </div>
+                <div class="sales-chart-wrapper" style="position: relative; height: 260px; width: 100%;">
+                  <canvas id="sales-chart"></canvas>
+                </div>
+              </div>
+
+              <div class="dashboard-grid">
+                <div class="dashboard-card recent-orders-card">
+                  <h2>📦 أحدث الطلبات الواردة</h2>
+                  <div class="orders-table-wrapper" style="margin-top: 12px; border: none;">
+                    <table class="orders-table">
+                      <thead>
+                        <tr>
+                          <th>العميل</th>
+                          <th>رقم الهاتف</th>
+                          <th>الإجمالي</th>
+                          <th>الحالة</th>
+                        </tr>
+                      </thead>
+                      <tbody data-recent-orders-list>
+                        <!-- أحدث 5 طلبات -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <div class="dashboard-card top-selling-card">
+                  <h2>🔥 العطور الأكثر مبيعاً وطَلباً</h2>
+                  <div class="top-perfumes-list" data-top-perfumes-list style="margin-top: 12px;">
+                    <!-- المنتجات الأكثر مبيعاً -->
+                  </div>
+                </div>
+              </div>
             </div>
-            <p class="form-message wide" data-product-message></p>
-          </form>
 
-          <div class="admin-list" data-products-list></div>
-        </div>
+            <!-- TAB 1: View Products -->
+            <div class="tab-content is-hidden" id="tab-products">
+              <div class="admin-title" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <p class="eyebrow">المتجر</p>
+                  <h1>قائمة العطور المتاحة</h1>
+                </div>
+                <button type="button" class="checkout" style="width: auto; padding: 10px 20px;" data-go-to-add-product>
+                  ➕ إضافة عطر جديد
+                </button>
+              </div>
+              <div class="admin-list" data-products-list></div>
+            </div>
 
-        <!-- Tab 2: Orders Content -->
-        <div class="tab-content is-hidden" id="tab-orders">
-          <div class="orders-table-wrapper">
-            <table class="orders-table">
-              <thead>
-                <tr>
-                  <th>معرف الطلب</th>
-                  <th>العميل</th>
-                  <th>رقم الهاتف</th>
-                  <th>المنتجات المطلوبة</th>
-                  <th>الإجمالي</th>
-                  <th>التاريخ</th>
-                  <th>الحالة</th>
-                </tr>
-              </thead>
-              <tbody data-orders-list>
-                <!-- Orders will be loaded here dynamically -->
-              </tbody>
-            </table>
-          </div>
+            <!-- TAB 2: Add/Edit Product -->
+            <div class="tab-content is-hidden" id="tab-add-product">
+              <div class="admin-title">
+                <div>
+                  <p class="eyebrow">إدارة البيانات</p>
+                  <h1 data-product-editor-title>إضافة منتج عطر جديد</h1>
+                </div>
+              </div>
+
+              <form class="product-editor" data-product-form>
+                <input type="hidden" name="id" />
+                <label>
+                  اسم المنتج
+                  <input name="name" required />
+                </label>
+                <label>
+                  النوع
+                  <select name="category" required>
+                    <option value="oud">عود</option>
+                    <option value="fresh">منعش</option>
+                    <option value="musk">مسك</option>
+                  </select>
+                </label>
+                <label>
+                  الحجم الافتراضي
+                  <input name="volume" placeholder="30ml" required />
+                </label>
+                <label>
+                  سعر البيع 30 مل (ج.م)
+                  <input name="price30" type="number" min="0" step="1" value="0" required />
+                </label>
+                <label>
+                  سعر البيع 50 مل (ج.م)
+                  <input name="price50" type="number" min="0" step="1" value="0" required />
+                </label>
+                <label>
+                  سعر البيع 100 مل (ج.م)
+                  <input name="price100" type="number" min="0" step="1" value="0" required />
+                </label>
+                <label style="opacity: 0.7;">
+                  سعر بيع افتراضي (احتياطي)
+                  <input name="price" type="number" min="0" step="1" value="0" />
+                </label>
+                <label>
+                  سعر الزجاجة الفارغة (تكلفة)
+                  <input name="bottlePrice" type="number" min="0" step="1" value="0" />
+                </label>
+                <label>
+                  سعر الزيت (تكلفة)
+                  <input name="oilPrice" type="number" min="0" step="1" value="0" />
+                </label>
+                <label>
+                  تكلفة المواصلات
+                  <input name="transportCost" type="number" min="0" step="1" value="0" />
+                </label>
+                <label>
+                  الوسم
+                  <input name="tag" placeholder="مسائي" required />
+                </label>
+                <label>
+                  ترتيب العرض
+                  <input name="sort" type="number" min="1" value="1" required />
+                </label>
+
+                <!-- Oil company selector -->
+                <div class="wide" style="padding: 12px; background: rgba(46,163,159,0.08); border-radius: 8px; border: 1px dashed var(--line); display: grid; gap: 8px;">
+                  <p style="margin: 0; font-size: 13px; color: var(--muted);">💡 اختر شركة زيت لتطبيق سعر الجرام تلقائياً على حقل <strong>سعر الزيت</strong> أعلاه:</p>
+                  <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-end;">
+                    <select id="oil-company-select" style="flex:2; min-width: 140px;">
+                      <option value="">-- اختر شركة الزيت --</option>
+                    </select>
+                    <input type="number" id="oil-weight-input" placeholder="وزن الزيت (جم)" step="0.01" min="0" style="flex:1; min-width: 80px;" />
+                    <button type="button" id="apply-oil-btn" class="secondary-action" style="padding: 10px;">احسب سعر الزيت</button>
+                  </div>
+                </div>
+
+                <div class="wide" style="margin-top: 4px; padding: 12px; border: 1px dashed var(--line); border-radius: 6px; background: rgba(46, 163, 159, 0.05); display: flex; align-items: center; justify-content: space-between;">
+                  <span style="font-weight: 700; color: var(--muted);">صافي ربح الزجاجة المتوقع (بناءً على التكلفة والسعر):</span>
+                  <strong style="color: var(--accent-teal); font-size: 18px;"><span data-profit-preview>0</span> جنيه</strong>
+                </div>
+
+                <label>
+                  لون الزجاجة (الوضع المضيء)
+                  <input type="color" id="tone-picker" value="#c77d35" />
+                  <input type="hidden" name="tone" value="rgba(199, 125, 53, 0.32)" />
+                </label>
+                <label class="wide">
+                  صورة المنتج
+                  <input type="file" id="image-file-input" accept="image/jpeg,image/png,image/webp" />
+                  <input type="hidden" name="image" />
+                  <div class="image-preview-wrapper">
+                    <img id="image-preview" src="" alt="معاينة الصورة" class="is-hidden" />
+                  </div>
+                </label>
+                <label class="checkbox-label wide">
+                  <input type="checkbox" name="featured" value="true" />
+                  تمييز المنتج في الواجهة الرئيسية (Featured)
+                </label>
+                <label class="wide">
+                  النوتات والوصف
+                  <textarea name="notes" rows="3" required></textarea>
+                </label>
+                <div class="form-actions wide">
+                  <button class="checkout" type="submit">حفظ المنتج</button>
+                  <button class="secondary-action" type="button" data-reset-form>تصفير الحقول</button>
+                </div>
+                <p class="form-message wide" data-product-message></p>
+              </form>
+            </div>
+
+            <!-- TAB 3: Orders -->
+            <div class="tab-content is-hidden" id="tab-orders">
+              <div class="admin-title" style="margin-bottom:16px;">
+                <div>
+                  <p class="eyebrow">الطلبات</p>
+                  <h1>قائمة طلبات العملاء</h1>
+                </div>
+              </div>
+
+              <!-- Search & Filter Bar -->
+              <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; align-items:center; background:rgba(255,255,255,0.03); border:1px solid var(--line); border-radius:10px; padding:12px 16px;">
+                <input id="orders-search" type="text" placeholder="🔍 ابحث بالاسم أو التليفون..." style="flex:2; min-width:200px; font-size:14px;" />
+                <select id="orders-filter-status" style="flex:1; min-width:130px; font-size:13px;">
+                  <option value="all">كل الحالات</option>
+                  <option value="new">جديد</option>
+                  <option value="preparing">قيد التجهيز</option>
+                  <option value="done">تم التوصيل</option>
+                  <option value="cancelled">ملغي</option>
+                </select>
+                <select id="orders-filter-date" style="flex:1; min-width:130px; font-size:13px;">
+                  <option value="all">كل التواريخ</option>
+                  <option value="today">اليوم</option>
+                  <option value="week">هذا الأسبوع</option>
+                  <option value="month">هذا الشهر</option>
+                </select>
+                <span id="orders-count-badge" style="font-size:13px; color:var(--muted); white-space:nowrap;"></span>
+              </div>
+
+              <div class="orders-table-wrapper">
+                <table class="orders-table">
+                  <thead>
+                    <tr>
+                      <th>معرف الطلب</th>
+                      <th>العميل</th>
+                      <th>واتساب</th>
+                      <th>المنتجات المطلوبة</th>
+                      <th>الإجمالي</th>
+                      <th>التاريخ</th>
+                      <th>الحالة</th>
+                      <th>إجراءات</th>
+                    </tr>
+                  </thead>
+                  <tbody data-orders-list>
+                    <!-- Orders loaded dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- TAB 4: Purchases -->
+            <div class="tab-content is-hidden" id="tab-purchases">
+              <div class="admin-title">
+                <div>
+                  <p class="eyebrow">المالية والواردات</p>
+                  <h1>إدارة المشتريات والمصروفات</h1>
+                </div>
+              </div>
+
+              <form class="product-editor" id="purchase-form" style="margin-bottom: 2rem;">
+                <h2 style="grid-column: 1/-1; margin: 0 0 4px; font-size: 1.1rem; color: var(--accent-burgundy);">💸 تسجيل فاتورة شراء / مصروفات جديدة</h2>
+
+                <label>
+                  اسم المادة / الوصف
+                  <input id="p-itemName" placeholder="مثال: زجاجات فارغة 50مل، كحول 96%" required />
+                </label>
+
+                <label>
+                  تصنيف المشتريات
+                  <select id="p-category" required>
+                    <option value="oil">زيوت عطرية (Perfume Oils)</option>
+                    <option value="bottle">زجاجات فارغة (Bottles)</option>
+                    <option value="cap">أغطية وبخاخات (Caps &amp; Sprayers)</option>
+                    <option value="box">علب وتغليف (Boxes &amp; Packaging)</option>
+                    <option value="alcohol">كحول ومذيبات (Alcohol &amp; Solvents)</option>
+                    <option value="other">مصاريف أخرى (Other Expenses)</option>
+                  </select>
+                </label>
+
+                <label>
+                  المورد
+                  <input id="p-supplier" placeholder="مثال: Luzi Egypt، شركة الزجاج" />
+                </label>
+
+                <label>
+                  الكمية
+                  <input type="number" id="p-quantity" min="0.01" step="any" placeholder="مثال: 50" required />
+                </label>
+
+                <label>
+                  سعر الوحدة (ج.م)
+                  <input type="number" id="p-unitPrice" min="0.01" step="any" placeholder="مثال: 12.5" required />
+                </label>
+
+                <label>
+                  تاريخ الشراء
+                  <input type="date" id="p-date" required />
+                </label>
+
+                <label class="wide">
+                  ملاحظات
+                  <textarea id="p-notes" rows="2" placeholder="أي تفاصيل إضافية..."></textarea>
+                </label>
+
+                <div class="form-actions wide">
+                  <button type="submit" class="checkout" style="background: var(--accent-burgundy); border-color: var(--accent-burgundy);">تسجيل الفاتورة</button>
+                  <button type="reset" class="secondary-action">مسح النموذج</button>
+                </div>
+                <p class="form-message wide" id="purchase-message"></p>
+              </form>
+
+              <div style="margin-top: 24px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                  <h2 style="font-size: 1.1rem; color: var(--accent-burgundy); margin: 0;">📋 فواتير المشتريات المسجلة</h2>
+                  <select id="purchase-filter-category" style="padding: 6px 12px; border-radius: 6px; font-size: 13px;">
+                    <option value="all">كل التصنيفات</option>
+                    <option value="oil">زيوت عطرية</option>
+                    <option value="bottle">زجاجات فارغة</option>
+                    <option value="cap">أغطية وبخاخات</option>
+                    <option value="box">علب وتغليف</option>
+                    <option value="alcohol">كحول ومذيبات</option>
+                    <option value="other">مصاريف أخرى</option>
+                  </select>
+                </div>
+
+                <div class="orders-table-wrapper">
+                  <table class="orders-table">
+                    <thead>
+                      <tr>
+                        <th>التاريخ</th>
+                        <th>اسم المادة</th>
+                        <th>التصنيف</th>
+                        <th>المورد</th>
+                        <th>الكمية</th>
+                        <th>سعر الوحدة</th>
+                        <th>الإجمالي</th>
+                        <th>ملاحظات</th>
+                        <th>حذف</th>
+                      </tr>
+                    </thead>
+                    <tbody data-purchases-list>
+                      <!-- Purchases loaded dynamically -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 5: Settings -->
+            <div class="tab-content is-hidden" id="tab-settings">
+              <div class="admin-title">
+                <div>
+                  <p class="eyebrow">التكاليف والثوابت</p>
+                  <h1>إعدادات المصنع والشركات</h1>
+                </div>
+              </div>
+
+              <form class="product-editor" id="settings-form" style="margin-bottom: 2rem;">
+                <h2 style="grid-column: 1/-1; margin: 0 0 4px; font-size: 1.1rem; color: var(--accent-teal);">🧴 الثوابت الافتراضية لكل زجاجة عطر</h2>
+                <label>
+                  سعر الزجاجة الفارغة (ج.م)
+                  <input type="number" id="s-bottle" step="0.01" min="0" value="0" />
+                </label>
+                <label>
+                  سعر الغطاء والبخاخ (ج.م)
+                  <input type="number" id="s-cap" step="0.01" min="0" value="0" />
+                </label>
+                <label>
+                  سعر العلبة والتغليف (ج.م)
+                  <input type="number" id="s-box" step="0.01" min="0" value="0" />
+                </label>
+                <label>
+                  سعر الكحول والمذيبات (ج.م)
+                  <input type="number" id="s-alcohol" step="0.01" min="0" value="0" />
+                </label>
+
+                <div class="wide" style="background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.3); border-radius: 10px; padding: 16px; margin-top: 4px;">
+                  <h3 style="margin: 0 0 10px; font-size: 1rem; color: #8b5cf6;">🏦 رأس المال الثابت</h3>
+                  <p style="margin: 0 0 10px; font-size: 13px; color: var(--muted);">هو المبلغ اللي أنت دفعته كرأس مال للمشروع. بيتحسب في صفحة الإحصائيات عشان تعرف الربح الحقيقي.</p>
+                  <label style="background: none; border: none; padding: 0;">
+                    رأس المال (ج.م)
+                    <input type="number" id="s-capital" step="1" min="0" value="0" style="border-color: rgba(139,92,246,0.5);" />
+                  </label>
+                </div>
+
+                <div class="form-actions wide">
+                  <button type="submit" class="checkout">حفظ الثوابت</button>
+                </div>
+                <p class="form-message wide" id="settings-message"></p>
+              </form>
+
+              <div style="background: var(--bg-card, #111); border: 1px solid var(--line); border-radius: 12px; padding: 20px;">
+                <h2 style="margin: 0 0 16px; font-size: 1.1rem; color: var(--accent-teal);">🧪 شركات الزيوت وأسعار شراء الجرام</h2>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 16px;">
+                  <input type="text" id="company-name-input" placeholder="اسم الشركة (مثال: Luzi)" style="flex: 2; min-width: 140px;" />
+                  <input type="number" id="company-price-input" placeholder="سعر الجرام ج.م" step="0.01" min="0" style="flex: 1; min-width: 90px;" />
+                  <button type="button" id="add-company-btn" class="checkout" style="white-space: nowrap;">حفظ الشركة</button>
+                </div>
+                <div id="companies-list"></div>
+              </div>
+            </div>
+
+          </main>
         </div>
       </section>
     </main>
@@ -188,6 +564,55 @@
         </div>
       </div>
     </dialog>
+
+    <!-- Order Edit Modal -->
+    <dialog id="order-edit-modal" class="confirm-modal" style="max-width: 680px; width: 95vw;">
+      <div class="modal-content" style="width: 100%;">
+        <h2 style="margin-bottom: 16px;">✏️ تعديل الطلب</h2>
+        <form id="order-edit-form">
+          <input type="hidden" id="edit-order-id" />
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+            <label style="display:flex; flex-direction:column; gap:6px; font-size:14px; color:var(--muted);">
+              اسم العميل
+              <input id="edit-customer-name" type="text" style="font-size:14px;" required />
+            </label>
+            <label style="display:flex; flex-direction:column; gap:6px; font-size:14px; color:var(--muted);">
+              رقم الهاتف
+              <input id="edit-phone" type="tel" style="font-size:14px;" />
+            </label>
+          </div>
+          <label style="display:flex; flex-direction:column; gap:6px; font-size:14px; color:var(--muted); margin-bottom:12px;">
+            ملاحظات / عنوان التوصيل
+            <input id="edit-notes" type="text" style="font-size:14px;" />
+          </label>
+
+          <div id="edit-items-container" style="display:flex; flex-direction:column; gap:10px; margin-bottom:12px;"></div>
+
+          <button type="button" id="add-edit-item-btn" class="secondary-action" style="width:100%; margin-bottom:12px;">
+            ➕ إضافة منتج للطلب
+          </button>
+
+          <div style="background:rgba(255,255,255,0.04); border-radius:8px; padding:12px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-weight:700; color:var(--muted);">الإجمالي الجديد:</span>
+            <strong id="edit-order-total" style="color:var(--accent-gold); font-size:20px;">0 جنيه</strong>
+          </div>
+
+          <label style="display:flex; flex-direction:column; gap:6px; font-size:13px; color:#f59e0b; margin-bottom:16px;">
+            📝 ملاحظة داخلية (للأدمن فقط - لا تظهر للعميل)
+            <textarea id="edit-internal-note" rows="2" style="font-size:13px; border-color:rgba(245,158,11,0.4); resize:vertical;"></textarea>
+          </label>
+
+          <div class="confirm-actions">
+            <button type="submit" class="checkout" style="flex:1;">💾 حفظ التعديلات</button>
+            <button type="button" class="secondary-action" id="close-order-edit-btn">إلغاء</button>
+          </div>
+          <p id="order-edit-message" style="margin-top:8px; font-size:13px; text-align:center;"></p>
+        </form>
+      </div>
+    </dialog>
+
+    <!-- Invoice Print Area (hidden, shown only on print) -->
+    <div id="invoice-print-area"></div>
     <div id="toast-container" class="toast-container" aria-live="polite"></div>
 
     <script src="./toast.js"></script>

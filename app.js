@@ -79,6 +79,8 @@ const sortSelect = document.querySelector("[data-sort-select]");
 
 let isWhatsAppSubmit = false;
 let activeDetailProductId = "";
+let selectedDetailSize = "";
+let selectedDetailPrice = 0;
 
 const formatter = new Intl.NumberFormat("ar-EG");
 
@@ -102,7 +104,23 @@ function syncCartWithProducts() {
     .map((cartItem) => {
       const freshProduct = products.find((product) => (product.id || product.name) === (cartItem.id || cartItem.name));
       if (!freshProduct) return null;
-      return { ...freshProduct, quantity: Math.max(1, Number(cartItem.quantity) || 1) };
+
+      let resolvedPrice = cartItem.price;
+      if (cartItem.volume === "30ml" && freshProduct.price30 > 0) {
+        resolvedPrice = freshProduct.price30;
+      } else if (cartItem.volume === "50ml" && freshProduct.price50 > 0) {
+        resolvedPrice = freshProduct.price50;
+      } else if (cartItem.volume === "100ml" && freshProduct.price100 > 0) {
+        resolvedPrice = freshProduct.price100;
+      } else if (freshProduct.price > 0) {
+        resolvedPrice = freshProduct.price;
+      }
+
+      return {
+        ...cartItem,
+        price: resolvedPrice,
+        image: freshProduct.image
+      };
     })
     .filter(Boolean);
   saveCart();
@@ -197,7 +215,7 @@ function toggleWishlist(productId) {
   }
   localStorage.setItem("wishlist", JSON.stringify(state.wishlist));
   updateWishlistUI();
-  
+
   if (state.filter === "wishlist") {
     renderProducts();
   } else {
@@ -213,7 +231,7 @@ function toggleWishlist(productId) {
 
 // Intersection Observer for scroll animations
 function initScrollReveal() {
-  const reveals = document.querySelectorAll(".product-card, .set-card, .drawer, .testimonial-card, .trust-strip > div, .offer-band");
+  const reveals = document.querySelectorAll(".product-card, .set-card, .testimonial-card, .trust-strip > div, .offer-band");
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
@@ -255,11 +273,11 @@ async function loadProducts() {
 
 function getVisibleProducts() {
   return products.filter((product) => {
-    const matchesFilter = 
-      state.filter === "all" || 
+    const matchesFilter =
+      state.filter === "all" ||
       (state.filter === "wishlist" && state.wishlist.includes(product.id || product.name)) ||
       product.category === state.filter;
-      
+
     const text = `${product.name} ${product.notes} ${product.tag}`.toLowerCase();
     const matchesQuery = text.includes(state.query.trim().toLowerCase());
     const matchesPrice = Number(product.price) <= state.maxPrice;
@@ -306,7 +324,7 @@ function renderProducts() {
     if (badge) {
       badge.classList.toggle("is-visible", !!product.featured);
     }
-    
+
     // Set Product image
     const imgEl = card.querySelector(".product-img");
     if (imgEl) {
@@ -328,9 +346,24 @@ function renderProducts() {
     }
 
     card.querySelector(".add-button").addEventListener("click", () => {
-      addToCart(prodId);
+      let defaultSize = "30ml";
+      let defaultPrice = product.price;
+      if (product.price30 > 0) {
+        defaultSize = "30ml";
+        defaultPrice = product.price30;
+      } else if (product.price50 > 0) {
+        defaultSize = "50ml";
+        defaultPrice = product.price50;
+      } else if (product.price100 > 0) {
+        defaultSize = "100ml";
+        defaultPrice = product.price100;
+      } else {
+        defaultSize = product.volume || "30ml";
+        defaultPrice = product.price || 0;
+      }
+      addToCart(prodId, defaultSize, defaultPrice);
       if (window.showToast) {
-        window.showToast(`تمت إضافة ${product.name} إلى السلة`, "success");
+        window.showToast(`تمت إضافة ${product.name} إلى السلة (${defaultSize})`, "success");
       }
     });
 
@@ -359,9 +392,43 @@ function openProductDetails(productId) {
     detailBadge.classList.toggle("is-visible", !!product.featured);
   }
   if (detailName) detailName.textContent = product.name;
-  if (detailMeta) detailMeta.textContent = `${product.volume} / ${product.tag}`;
   if (detailNotes) detailNotes.textContent = product.notes;
-  if (detailPrice) detailPrice.textContent = money(product.price);
+
+  const sizesGroup = document.querySelector("[data-detail-sizes]");
+  if (sizesGroup) {
+    sizesGroup.innerHTML = "";
+    const sizeOptions = [];
+    if (product.price30 > 0) sizeOptions.push({ size: "30ml", price: product.price30 });
+    if (product.price50 > 0) sizeOptions.push({ size: "50ml", price: product.price50 });
+    if (product.price100 > 0) sizeOptions.push({ size: "100ml", price: product.price100 });
+
+    if (sizeOptions.length === 0) {
+      sizeOptions.push({ size: product.volume || "30ml", price: product.price || 0 });
+    }
+
+    sizeOptions.forEach((opt, idx) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "size-option-btn";
+      if (idx === 0) {
+        btn.classList.add("active");
+        selectedDetailSize = opt.size;
+        selectedDetailPrice = opt.price;
+        if (detailPrice) detailPrice.textContent = money(opt.price);
+        if (detailMeta) detailMeta.textContent = `${opt.size} / ${product.tag}`;
+      }
+      btn.textContent = opt.size;
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".size-option-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        selectedDetailSize = opt.size;
+        selectedDetailPrice = opt.price;
+        if (detailPrice) detailPrice.textContent = money(opt.price);
+        if (detailMeta) detailMeta.textContent = `${opt.size} / ${product.tag}`;
+      });
+      sizesGroup.appendChild(btn);
+    });
+  }
 
   productDetailModal.showModal();
 }
@@ -372,21 +439,33 @@ if (detailCloseBtn) {
 
 if (detailAddBtn) {
   detailAddBtn.addEventListener("click", () => {
-    addToCart(activeDetailProductId);
+    addToCart(activeDetailProductId, selectedDetailSize, selectedDetailPrice);
     productDetailModal.close();
     openDrawer();
   });
 }
 
-function addToCart(productId) {
+function addToCart(productId, size, price) {
   const product = products.find((item) => (item.id || item.name) === productId);
   if (!product) return;
 
-  const existing = state.cart.find((item) => (item.id || item.name) === productId);
+  const finalSize = size || product.volume || "30ml";
+  const finalPrice = price || product.price || 0;
+  const cartKey = `${productId}-${finalSize}`;
+
+  const existing = state.cart.find((item) => item.cartKey === cartKey);
   if (existing) {
     existing.quantity += 1;
   } else {
-    state.cart.push({ ...product, quantity: 1 });
+    state.cart.push({
+      cartKey: cartKey,
+      id: productId,
+      name: `${product.name} - ${finalSize}`,
+      price: finalPrice,
+      volume: finalSize,
+      image: product.image,
+      quantity: 1
+    });
   }
 
   saveCart();
@@ -402,16 +481,17 @@ function renderCart() {
     state.cart.forEach((item) => {
       const row = document.createElement("div");
       row.className = "cart-row";
+      const itemKey = item.cartKey || item.id || item.name;
       row.innerHTML = `
         <div>
           <strong>${item.name}</strong>
           <span>${money(item.price)}</span>
         </div>
         <div class="cart-row-actions">
-          <button class="qty-btn" type="button" data-minus="${item.id || item.name}">-</button>
+          <button class="qty-btn" type="button" data-minus="${itemKey}">-</button>
           <span>${item.quantity}</span>
-          <button class="qty-btn" type="button" data-plus="${item.id || item.name}">+</button>
-          <button class="remove-btn" type="button" data-remove="${item.id || item.name}" aria-label="حذف">&times;</button>
+          <button class="qty-btn" type="button" data-plus="${itemKey}">+</button>
+          <button class="remove-btn" type="button" data-remove="${itemKey}" aria-label="حذف">&times;</button>
         </div>
         <strong>${money(item.quantity * item.price)}</strong>
       `;
@@ -432,25 +512,25 @@ cartItems.addEventListener("click", (e) => {
   const removeId = e.target.dataset.remove;
 
   if (plusId) {
-    const item = state.cart.find(i => (i.id || i.name) === plusId);
+    const item = state.cart.find(i => (i.cartKey === plusId) || (i.id || i.name) === plusId);
     if (item) {
       item.quantity += 1;
       saveCart();
       renderCart();
     }
   } else if (minusId) {
-    const item = state.cart.find(i => (i.id || i.name) === minusId);
+    const item = state.cart.find(i => (i.cartKey === minusId) || (i.id || i.name) === minusId);
     if (item) {
       if (item.quantity > 1) {
         item.quantity -= 1;
       } else {
-        state.cart = state.cart.filter(i => (i.id || i.name) !== minusId);
+        state.cart = state.cart.filter(i => (i.cartKey !== minusId) && (i.id || i.name) !== minusId);
       }
       saveCart();
       renderCart();
     }
   } else if (removeId) {
-    state.cart = state.cart.filter(i => (i.id || i.name) !== removeId);
+    state.cart = state.cart.filter(i => (i.cartKey !== removeId) && (i.id || i.name) !== removeId);
     saveCart();
     renderCart();
     if (window.showToast) {
@@ -547,6 +627,7 @@ if (checkoutForm) {
       notes,
       items: state.cart.map(item => ({
         id: item.id,
+        size: item.volume,
         quantity: item.quantity
       }))
     };
